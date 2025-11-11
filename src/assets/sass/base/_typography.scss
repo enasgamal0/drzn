@@ -1,0 +1,26 @@
+// START:: FONT
+@font-face {
+    font-family: $light_font;
+    src: url("../fonts/Cairo-Light.ttf");
+}
+@font-face {
+    font-family: $regular_font;
+    src: url("../fonts/Cairo-Regular.ttf");
+}
+@font-face {
+    font-family: $medium_font;
+    src: url("../fonts/Cairo-Medium.ttf");
+}
+@font-face {
+    font-family: $semi_bold_font;
+    src: url("../fonts/Cairo-SemiBold.ttf");
+}
+@font-face {
+    font-family: $bold_font;
+    src: url("../fonts/Cairo-Bold.ttf");
+}
+@font-face {
+    font-family: $extra_bold_font;
+    src: url("../fonts/Cairo-ExtraBold.ttf");
+}
+// END:: FONT

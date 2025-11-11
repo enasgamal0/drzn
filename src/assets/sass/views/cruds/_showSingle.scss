@@ -1,0 +1,292 @@
+.single_show_content_wrapper {
+  .single_step_form_content_wrapper {
+    position: relative;
+    .badges_wrapper {
+      // position: absolute;
+      // top: 25px;
+      // left: 25px;
+      margin-bottom: 15px;
+      @include flexStartAlignment;
+      flex-wrap: wrap;
+      gap: 8px;
+      .wrapper {
+        @include flexStartAlignment;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+    }
+    .table_title {
+      font-size: 18px;
+      color: var(--main_theme_clr);
+    }
+    .v-data-table {
+      background-color: var(--theme_second_bg_clr) !important;
+      color: var(--theme_text_clr);
+
+      .v-data-table__wrapper {
+        table {
+          thead {
+            tr {
+              th {
+                color: var(--theme_text_clr) !important;
+              }
+            }
+
+            &.v-data-table-header-mobile {
+              display: none;
+            }
+          }
+
+          tbody {
+            tr {
+              &.v-data-table__empty-wrapper {
+                color: var(--theme_text_clr);
+              }
+
+              &:hover {
+                background: var(--theme_main_bg_clr) !important;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.single_show_title_wrapper {
+  margin-block: 10px;
+  @include flexSpaceBetweenAlignment;
+  h4 {
+    color: var(--theme_text_clr);
+    font-family: $semi_bold_font;
+  }
+
+  .action_btns_wrapper {
+    @include flexEndAlignment;
+    column-gap: 20px;
+    button {
+      padding: 10px 0;
+      font-size: 22px;
+
+      &.change_status_modal_btn {
+        @include simpleButtonStyle;
+        margin-top: 0;
+        width: max-content;
+        font-size: 18px;
+      }
+
+      &.btn_edit {
+        svg,
+        i {
+          color: var(--gold_clr);
+        }
+      }
+
+      &.btn_delete {
+        svg,
+        i {
+          color: var(--light_red_clr);
+        }
+      }
+    }
+  }
+}
+
+.tabs_wrapper {
+  .v-card {
+    .v-window {
+      &::-webkit-scrollbar {
+        width: 0;
+      }
+      overflow: auto !important;
+      .v-sheet {
+        // height: calc(100vh - 330px);
+      }
+    }
+  }
+}
+
+.cards_group {
+  padding: 18px;
+  border: 2px dashed var(--border_clr);
+  @include borderRadius(10px);
+
+  &.files {
+    .item_data_card {
+      @include flexStartAlignment;
+      flex-direction: column;
+      background-image: none;
+      padding: 0;
+      box-shadow: none;
+      background-color: transparent;
+      .row_group {
+        width: 65%;
+        margin-top: 15px;
+        padding: 10px 15px;
+        @include borderRadius(10px);
+        .card_title,
+        .card_content,
+        .link_card_content {
+          width: 100%;
+          h5 {
+            font-size: 18px;
+            color: var(--main_theme_clr);
+          }
+          h4,
+          a {
+            color: var(--theme_text_clr);
+            font-size: 20px;
+          }
+        }
+        .card_title {
+          @include flexSpaceBetweenAlignment;
+        }
+        .link_card_content {
+          @include textEllipsis;
+        }
+      }
+
+      .added_by {
+        margin-block: 6px 20px;
+        padding-inline-start: 8px;
+        span {
+          color: var(--light_gray_clr);
+          font-size: 16px;
+          font-family: $semi_bold_font;
+          svg,
+          i {
+            color: var(--light_gray_clr);
+            font-size: 8px;
+          }
+        }
+      }
+      &.me {
+        align-items: flex-start;
+        .row_group {
+          background-color: var(--very_light_theme_clr);
+        }
+      }
+      &.other {
+        align-items: flex-end;
+        .row_group {
+          background-color: var(--mid_shadow_clr);
+        }
+      }
+    }
+  }
+
+  .group_title {
+    margin-bottom: 15px;
+    color: var(--main_theme_clr);
+    font-family: $semi_bold_font;
+  }
+}
+
+.cards_wrapper {
+  .content_wrapper {
+    width: 100%;
+    &:not(:last-child) {
+      margin-bottom: 30px;
+    }
+    .group_title {
+      margin-bottom: 15px !important;
+      text-align: center;
+      color: var(--main_theme_clr);
+      font-size: 20px;
+      font-weight: $medium_font;
+    }
+
+    .wrapper {
+      @include flexCenterAlignment;
+      gap: 20px;
+      flex-wrap: wrap;
+      .item_data_card {
+        min-height: 90px;
+        min-width: 200px;
+        @include verticalFlexStartAlignment;
+        // background-image: url("../media/logo/logo.png");
+        background-size: 60%;
+        background-position: -83% 0;
+        padding: 10px 15px;
+        background-color: var(--theme_second_bg_clr);
+        border-radius: 10px;
+        @include simpleShadow;
+
+        &.small_card_bg {
+          background-size: 80%;
+          background-position: -210%;
+        }
+
+        &.large_card_bg {
+          background-size: 25%;
+          background-position: -18%;
+        }
+
+        .card_title {
+          width: 90%;
+          h5 {
+            font-size: 18px;
+            font-family: $medium_font;
+            color: var(--theme_text_clr);
+          }
+        }
+
+        .card_content {
+          width: 90%;
+
+          h4 {
+            margin-bottom: 0;
+            font-size: 22px;
+            font-family: $regular_font;
+            color: var(--theme_text_clr);
+            opacity: 0.8;
+            line-height: 1.5;
+          }
+        }
+
+        .link_card_content {
+          width: 90%;
+          @include textEllipsis;
+          a {
+            margin-bottom: 0;
+            font-size: 22px;
+            font-family: $regular_font;
+            color: var(--theme_text_clr);
+            opacity: 0.8;
+            line-height: 1.5;
+            text-decoration: underline;
+            max-width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 850px) {
+  .single_show_content_wrapper {
+    .single_step_form_content_wrapper {
+      .badges_wrapper {
+        width: 100%;
+        justify-content: center !important;
+        .wrapper {
+          flex-wrap: nowrap;
+        }
+        .v-chip {
+          font-size: 12px;
+          height: 25px;
+        }
+      }
+    }
+  }
+
+  .cards_wrapper {
+    .item_data_card {
+      &.small_card_bg {
+        background-size: 55%;
+        background-position: -65%;
+      }
+    }
+  }
+}

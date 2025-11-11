@@ -1,0 +1,86 @@
+// Start:: Importing Abstracts
+@import "./abstracts/variables";
+@import "./abstracts/mixins";
+// End:: Importing Abstracts
+
+// Start:: Importing Base Style Files
+@import "./base/reset";
+@import "./base/global";
+@import "./base/typography";
+@import "./base/animation";
+@import "./base/emojisPicker";
+// @import "./base/mainRtl";
+// End:: Importing Base Style Files
+
+// Start:: Importing Pages Styles //
+@import "pages/appContentWrapper";
+@import "pages/notFoundPage";
+// End:: Importing Pages Styles //
+
+// Start:: Importing Components Style Files
+// ********** Start:: Importing Structure Components Styles ********** //
+@import "./components/navigation/theHeader";
+@import "./components/navigation/theFooter";
+@import "./components/formInputs/formInputs";
+// ********** End:: Importing Structure Components Styles ********** //
+
+// ********** Start:: Importing Cruds Styles ********** //
+@import "views/cruds/showAll";
+@import "views/cruds/showSingle";
+@import "views/cruds/createAndEdit";
+// ********** END:: Importing Cruds Styles ********** //
+
+// ********** Start:: PDF Content Styles ********** //
+@import "views/pdfContent/pdfContent";
+// ********** END:: PDF Content Styles ********** //
+
+// ********** Start:: Importing Special Authentication Components Styles ********** //
+@import "views/auth/authentication";
+@import "views/auth/phoneVerification";
+// ********** End:: Importing Special Authentication Components Styles ********** //
+
+// ********** Start:: Importing Ui Components Styles ********** //
+@import "components/ui/slider";
+@import "components/ui/breadcrumb";
+@import "components/ui/tabs";
+@import "components/charts/charts";
+@import "components/ui/loaders";
+@import "components/ui/solidCard";
+@import "components/ui/imagedCard";
+@import "components/ui/imageHeader";
+@import "components/ui/baseModal";
+@import "components/ui/userEmptyMessage";
+// ********** End:: Importing Ui Components Styles ********** //
+
+// ********** Start:: Importing Modals Styles ********** //
+@import "components/modals/termsModal";
+@import "components/modals/storeItemModal";
+@import "components/modals/addBankAccount";
+@import "components/modals/successModal";
+@import "components/modals/teacherModal";
+@import "components/modals/editLessonModal";
+@import "components/modals/deleteModal";
+// ********** End:: Importing Modals Styles ********** //
+// End:: Importing Components Style Files
+
+// Start:: Importing Views Styles //
+@import "views/allNotifications";
+// End:: Importing Views Styles //
+
+// Start:: Importing Ltr Styles //
+@import "components/ltr";
+// Start:: Importing Ltr Styles //
+
+// ======== START:: IMPORTING CHAT COMPONENTS STYLES ======== //
+// @import "components/conversation/chatsList";
+// @import "components/conversation/chatContent";
+// ======== END:: IMPORTING CHAT COMPONENTS STYLES ======== //
+
+// .ant-message span{
+//   display: flex;
+//   flex-wrap: wrap;
+// }
+
+// ant-message-custom-content.ant-message-error span{
+//   font-size: 10px !important;
+// }

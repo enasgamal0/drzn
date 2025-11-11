@@ -1,0 +1,45 @@
+.success_wrapper {
+    .main_body {
+        padding-block: 35px;
+        .success_card {
+            text-align: center;
+
+            .icon {
+                height: 120px;
+                width: 120px;
+                @include flexCenterAlignment;
+                @include borderRadius(50%);
+                background-color: var(--main_theme_clr);
+                margin: 0 auto;
+                margin-bottom: 2rem;
+
+                i {
+                    font-size: 4rem;
+                    color: var(--white_clr);
+                }
+            }
+
+            h2 {
+                font-size: 2.8rem;
+                font-family: $bold_font;
+                color: var(--theme_text_clr);
+                margin-bottom: 10px;
+            }
+
+            p {
+                font-size: 1.8rem;
+                color: var(--light_gray_clr);
+                margin-bottom: 0;
+            }
+
+            .success_btn {
+                text-align: center;
+                button, 
+                a {
+                    @include simpleButtonStyle;
+                    width: 100%;
+                }
+            }
+        }
+    }
+}

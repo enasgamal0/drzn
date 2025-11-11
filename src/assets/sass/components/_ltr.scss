@@ -1,0 +1,96 @@
+body {
+  &[dir="ltr"] {
+    // Start:: Global Ltr Styles
+    // End:: Global Ltr Styles
+
+    // Start:: Ltr Header Style
+    nav {
+      .chats_drawer_wrapper {
+        left: -100%;
+        .chats_list {
+          left: -100%;
+        }
+        &.active {
+          left: 0;
+          .chats_list {
+            left: 0;
+          }
+        }
+      }
+    }
+    // End:: Ltr Header Style
+
+    // Start:: Single Item Ltr Data Card
+    .item_data_cards_wrapper {
+      .item_data_card {
+        background-position: 165%;
+      }
+    }
+    // End:: Single Item Ltr Data Card
+
+    .app_structure_wrapper
+      .side_nav_wrapper
+      .side_nav_links_wrapper
+      .home_route {
+      border-bottom: 2px solid #fff;
+    }
+    .app_structure_wrapper
+      .side_nav_wrapper
+      .side_nav_links_wrapper
+      .side_routes_wrapper
+      .ant-menu
+      .ant-menu-submenu
+      .ant-menu-submenu-title
+      span
+      span,
+    .app_structure_wrapper
+      .side_nav_wrapper
+      .side_nav_links_wrapper
+      .side_routes_wrapper
+      .ant-menu
+      .ant-menu-submenu
+      .ant-menu-submenu-title
+      a
+      span {
+      color: #fff;
+    }
+  }
+}
+
+body[dir=ltr] .app_structure_wrapper .side_nav_wrapper .side_nav_links_wrapper .side_routes_wrapper .ant-menu .ant-menu-submenu .ant-menu-submenu-title span span,
+body[dir=ltr] .app_structure_wrapper .side_nav_wrapper .side_nav_links_wrapper .side_routes_wrapper .ant-menu .ant-menu-submenu .ant-menu-submenu-title a span {
+  color: #000 !important;
+  width: 280px
+}
+
+body[dir=ltr] .app_structure_wrapper .side_nav_wrapper .side_nav_links_wrapper .side_routes_wrapper .ant-menu .ant-menu-submenu .ant-menu-submenu-title span .icondrop {
+  position: relative;
+  left: 40px;
+}
+
+:root .dark_theme .app_structure_wrapper .side_nav_wrapper .side_nav_links_wrapper .side_routes_wrapper .ant-menu .ant-menu-submenu .ant-menu-submenu-title span span,
+:root .dark_theme .app_structure_wrapper .side_nav_wrapper .side_nav_links_wrapper .side_routes_wrapper .ant-menu .ant-menu-submenu .ant-menu-submenu-title a span {
+  color: #fff !important;
+  width: 200px
+}
+body[dir=ltr] .add_another{
+  border: none;
+    padding: 8px;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--light_gray_clr);
+    border-radius: 50%;
+    font-size: 18px;
+    color: var(--light_gray_clr);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 46%;
+}
+body[dir="ltr"] .remove_phone_number {
+  margin-left: 5%;
+}
+body[dir=ltr] .warp{
+  margin-left: 35%;
+}

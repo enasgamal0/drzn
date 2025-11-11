@@ -1,0 +1,76 @@
+.store_item_modal_wrapper {
+    .selected_store_item_wrapper {
+        @include flexCenterAlignment;
+        flex-direction: column;
+        row-gap: 15px;
+        width: 100%;
+        .image_wrapper {
+            @include transitioning(0.5s);
+            img {
+                object-fit: cover;
+                @include borderRadius(10px);
+            }
+        }
+        .name_wrapper {
+            h2 {
+                margin-bottom: 0;
+                color: var(--theme_text_clr);
+                font-family: $medium_font;
+            }
+        }
+        .desc_wrapper {
+            @include textWraper;
+            text-align: center;
+            line-height: 1.1;
+        }
+        .cart_btns_wrapper {
+            width: 100%;
+            padding: 8px 15px;
+            @include flexSpaceBetweenAlignment;
+            background-color: var(--secondary_theme_clr);
+            @include borderRadius(10px);
+            button {
+                padding: 0;
+                margin: 0;
+                @include flexCenterAlignment;
+                &.decrement,
+                &.increment {
+                    i,
+                    svg {
+                        font-size: 22px;
+                    }
+                }
+            }
+            .quantity_in_cart {
+                padding: 0;
+                margin: 0;
+                font-size: 25px;
+                font-family: $medium_font;
+            }
+        }
+        .add_to_cart_and_wishlist_btns_wrapper {
+            width: 100%;
+            @include flexSpaceBetweenAlignment;
+            column-gap: 10px;
+            button {
+                &.add_to_cart_btn {
+                    @include simpleButtonStyle;
+                    margin-top: 0;
+                    width: 100%;
+                }
+                &.add_to_wishlist_btn {
+                    @include softButtonStyle( var(--soft_red_clr));
+                    margin: 0;
+                    padding-block: 25px;
+                    width: 15%;
+                    @include flexCenterAlignment;
+                    i,
+                    svg {
+                        color: var(--light_red_clr);
+                        font-size: 25px;
+                    }
+                }
+            }
+        }
+    }
+}

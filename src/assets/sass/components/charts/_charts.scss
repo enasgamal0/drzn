@@ -1,0 +1,90 @@
+.chart_card {
+    display: block;
+    background-color: var(--theme_second_bg_clr);
+    @include borderRadius(15px);
+    @include midShadow;
+    overflow: hidden;
+    .chart_title {
+        padding: 10px;
+        padding-bottom: 0;
+        padding-inline-start: 10px;
+        @include flexStartAlignment;
+        flex-direction: row-reverse;
+        column-gap: 8px;
+        .title_text {
+            color: var(--theme_text_clr);
+            font-size: 17px;
+            font-family: $semi_bold_font;
+        }
+
+        .filter_title {
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    .chart_description {
+        .desc {
+            text-align: end;
+            margin-top: 12px;
+            margin-bottom: 0;
+            padding-inline: 10px;
+            font-size: 20px;
+            color: var(--main_theme_clr);
+            font-family: $semi_bold_font;
+        }
+    }
+
+    .apexcharts-svg {
+        .apexcharts-xaxis-texts-g {
+            .apexcharts-text {
+                font-family: $regular_font !important;
+            }
+        }
+
+        .apexcharts-inner {
+            .apexcharts-datalabels-group {
+                .apexcharts-text {
+                    font-family: $medium_font !important;
+                    &.apexcharts-datalabel-value {
+                        fill: var(--theme_text_clr) !important;
+                    }
+                }
+            }
+        }
+        
+    }
+
+    .apexcharts-tooltip {
+        background-color: var(--theme_second_bg_clr) !important;
+        border: 1px solid var(--border_clr) !important;
+        color: var(--theme_text_clr) !important;
+        font-family: $regular_font !important;
+        .apexcharts-tooltip-title {
+            background-color: var(--theme_main_bg_clr) !important;
+            border-bottom: 1px solid var(--border_clr) !important;
+            color: var(--theme_text_clr) !important;
+            font-family: $regular_font !important;
+        }
+        .apexcharts-tooltip-y-group {
+            .apexcharts-tooltip-text-y-label,
+            .apexcharts-tooltip-text-y-value {
+                font-family: $regular_font !important;
+            }
+        }
+    }
+
+    .apexcharts-legend {
+        .apexcharts-legend-series {
+            margin-inline: 10px !important;
+            .apexcharts-legend-text {
+                color: var(--theme_text_clr) !important;
+                font-family: $regular_font !important;
+            }
+        }
+    }
+
+    & > div {
+        @include flexCenterAlignment;
+    }
+}

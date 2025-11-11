@@ -1,0 +1,25 @@
+.add_bank_account_form_wrapper{
+    form{
+        .input_wrapper{
+            margin-bottom: 1rem;
+            input{}
+        }
+        .page_small_title {
+            text-align: center;
+            margin-bottom: 45px;
+            h3 {
+                color: var(--theme_text_clr);
+                font-family: $medium_font;
+                font-size: 2rem;
+                margin-bottom: 0;
+            }
+        }
+        .add_btn {
+            text-align: center;
+            button {
+                @include simpleButtonStyle;
+                width: 250px;
+            }
+        }
+    }
+}

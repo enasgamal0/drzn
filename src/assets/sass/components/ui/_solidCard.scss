@@ -1,0 +1,4 @@
+.solid_card_wrapper {
+    background-color: var(--secondary_theme_clr);
+    @include borderRadius(15px);
+}

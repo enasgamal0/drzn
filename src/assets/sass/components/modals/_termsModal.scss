@@ -1,0 +1,20 @@
+.terms_modal_wrapper {
+    .terms_modal_title {
+        text-align: center;
+        color: var(--main_theme_clr);
+        font-family: $medium_font;
+    }
+
+    .modal_content {
+        @include textWraper;
+        font-size: 22px;
+    }
+
+    .btn_wrapper {
+        @include flexCenterAlignment;
+        button {
+            @include simpleButtonStyle;
+            margin-top: 20px;
+        }
+    }
+}

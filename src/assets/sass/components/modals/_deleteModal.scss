@@ -1,0 +1,57 @@
+.delete_modal_wrapper {
+    .main_body {
+        padding-block: 35px;
+        .delete_card {
+            width: 100%;    
+            text-align: center;
+
+            .icon {
+                height: 120px;
+                width: 120px;
+                @include flexCenterAlignment;
+                @include borderRadius(50%);
+                background-color: var(--light_red_clr);
+                margin: 0 auto;
+                margin-bottom: 2rem;
+
+                i {
+                    font-size: 4rem;
+                    color: var(--white_clr);
+                }
+            }
+
+            h2 {
+                font-family: $bold_font;
+            }
+
+            .btns_wrapper {
+                @include flexSpaceAroundAlignment;
+
+                .delete_btn {
+                    @include simpleButtonStyle;
+                    background-image: linear-gradient(45deg, transparent 50%, var(--light_red_clr) 50%);
+                    border: 1px solid var(--light_red_clr);
+                    width: 120px;
+                    &:hover {
+                        color: var(--light_red_clr);
+                        .btn_loader {
+                            border: 3px dotted var(--light_red_clr);
+                        }
+                    } 
+                }
+
+                .close_btn {
+                    @include softButtonStyle( var(--lighter_gray_clr) );
+                    margin: 0;
+                    padding: 5px 20px;
+                    width: 150px;    
+                    height: unset;
+                    font-size: 25px;
+                    font-family: $bold_font;
+                    color: var(--light_gray_clr);
+                    margin-top: 30px;
+                }
+            }
+        }
+    }
+}

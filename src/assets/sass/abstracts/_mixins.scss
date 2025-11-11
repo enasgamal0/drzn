@@ -1,0 +1,217 @@
+@mixin boxSizing {
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+@mixin transitioning($t) {
+    -moz-transition: all $t ease-in-out;
+    -webkit-transition: all $t ease-in-out;
+    -o-transition: all $t ease-in-out;
+    transition: all $t ease-in-out;
+}
+
+@mixin colorTransitioning($ct) {
+    -moz-transition: background $ct linear, color $ct linear;
+    -webkit-transition: background $ct linear, color $ct linear;
+    -o-transition: background $ct linear, color $ct linear;
+    transition: background $ct linear, color $ct linear;
+}
+
+@mixin borderRadius($br) {
+    -moz-border-radius: $br;
+    -webkit-border-radius: $br;
+    -o-border-radius: $br;
+    border-radius: $br;
+}
+
+@mixin customBorderRadius($tl, $tr, $br, $bl) {
+    -moz-border-radius: $tl $tr $br $bl;
+    -o-border-radius: $tl $tr $br $bl;
+    -webkit-border-radius: $tl $tr $br $bl;
+    border-radius: $tl $tr $br $bl;
+}
+
+@mixin menuHoverEffect {
+    overflow: hidden;
+    margin: 0 10px;
+    position: relative;
+    font-size: 15px;
+    button,
+    a {
+        text-decoration: none;
+        color: var(--dark_gray_clr);
+        @include transitioning(0.2s);
+        font-family: $bold_font;
+        &.router-link-exact-active {
+            color: var(--secondary_theme_clr);
+        }
+    }
+    &:hover {
+        button,
+        a {
+            color: var(--secondary_theme_clr);
+        }
+    }
+}
+
+@mixin borderedButtonStyle {
+    padding: 5px 20px;
+    font-family: $semi_bold_font;
+    font-size: 16px;
+    color: var(--dark_main_theme_clr);
+    background-image: linear-gradient(45deg, var(--dark_main_theme_clr) 50%, transparent 50%);
+    background-position: 100%;
+    background-size: 400%;
+    border: 1px solid var(--dark_main_theme_clr);
+    @include transitioning(0.6s);
+    @include borderRadius(6px);
+    &:hover {
+        background-position: 0;
+        color: var(--white_clr);
+    }
+}
+
+@mixin  simpleButtonStyle {
+    text-decoration: none;
+    position: relative;
+    display: inline-block;
+    width: 150px;
+    text-align: center;
+    margin-top: 30px;
+    padding: 5px  20px;
+    font-size: 20px;
+    font-family: $semi_bold_font;
+    color: var(--white_clr);
+    background-image: linear-gradient(90deg, transparent 50%, var(--main_theme_clr) 50%);
+    background-position: 100%;
+    background-size: 400%;
+    border: 1px solid var(--main_theme_clr);
+    @include borderRadius(6px);
+    @include transitioning(0.6s);
+    .btn_loader {
+        position: absolute;
+        left: 15px;
+        top: 30%;
+        width: 20px;
+        height: 20px;
+        padding: 2px;
+        border: 3px dotted var(--white_clr);
+        border-style: solid solid dotted dotted;
+        @include borderRadius(50%);
+        @include transitioning(0.4s);
+        display: inline-block;
+        animation: rotation 2s linear infinite;
+    }
+    &:hover {
+        background-position: 0;
+        color: var(--main_theme_clr);
+        .btn_loader {
+            border: 3px dotted var(--main_theme_clr);
+        }
+    } 
+
+    &:disabled {
+        opacity: 0.5;
+    }
+
+    @keyframes rotation {
+        from {
+            transform: rotate(0);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+}
+
+@mixin softButtonStyle($s_bg) {
+    width: 40px;
+    height: 40px;
+    @include flexCenterAlignment;
+    background-color: $s_bg;
+    color: var(--main_theme_clr);
+    @include borderRadius(10px);
+    i,
+    svg {
+        font-size: 20px;
+    }
+}
+
+@mixin mainHeaderStyle {
+    @include flexStartAlignment;
+    column-gap: 12px;
+    img {
+        width: 60px;
+    }
+    span {
+        font-size: 2.3rem;
+        font-family: $bold_font;
+        color: var(--theme_text_clr);
+    }
+}
+
+@mixin textEllipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@mixin flexCenterAlignment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flexStartAlignment {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+@mixin verticalFlexStartAlignment {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+@mixin flexSpaceBetweenAlignment {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@mixin flexSpaceAroundAlignment {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+@mixin flexEndAlignment {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+@mixin textWraper {
+    word-break: break-word;
+    word-spacing: 2px;
+    font-size: 22px;
+    color: var(--light_gray_clr);
+    line-height: 1.6;
+    text-align: start;
+}
+
+@mixin simpleShadow {
+    box-shadow: 0 0 6px 2px var(--simple_shadow_clr);
+}
+
+@mixin midShadow {
+    box-shadow: 0 0 6px 2px var(--mid_shadow_clr);
+}
+
+@mixin heighShadow {
+    box-shadow: 0 0 6px 2px rgba(180, 180, 180, 0.6);
+}

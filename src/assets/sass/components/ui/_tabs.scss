@@ -1,0 +1,78 @@
+.tabs_wrapper {
+    @include borderRadius(20px);
+    .v-sheet {
+        &.v-card {
+            background: var(--theme_main_bg_clr) !important;
+            @include customBorderRadius(10px, 10px, 0, 0);
+            &:not(.v-sheet--outlined) {
+                box-shadow: none !important;
+            }
+        }
+        .theme--light {
+            &.v-tabs-items {
+                background: var(--theme_main_bg_clr) !important;
+            }
+        }
+        .v-tabs {
+            padding-inline: 15px;
+            background: var(--theme_main_bg_clr) !important;
+            border-bottom: 1px solid var(--border_clr);
+            .v-item-group {
+                background: var(--theme_main_bg_clr) !important;
+                &.v-tabs-bar {
+                    height: unset !important;
+                }
+                .v-slide-group__wrapper {
+                    .v-slide-group__content {
+                        justify-content: start;
+                        align-items: center;
+                        column-gap: 40px;
+                        .v-tabs-slider-wrapper {
+                            display: none;
+                        }
+                        .v-tab {
+                            padding-inline: 0;
+                            padding-block: 10px;
+                            color: var(--light_gray_clr);
+                            font-size: 16px;
+                            font-family: $semi_bold_font;
+                            border-bottom: 2px solid transparent;
+
+                            &::before,
+                            &::after {
+                                display: none !important;
+                            }
+
+                            &.v-tab--active {
+                                color: var(--main_theme_clr);
+                                background-color: var(--theme_main_bg_clr);
+                                border-bottom: 2px solid var(--main_theme_clr);
+                                &::before,
+                                &::after {
+                                    display: none !important;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        @media (max-width: 768px) {
+        .v-slide-group__content {
+            justify-items: center;
+            display: block;
+        }
+    }
+        .v-window {
+            border-radius: 0 0 10px 10px !important;
+            .v-window__container {
+                .v-window-item {
+                    .v-card {
+                        background: var(--theme_main_bg_clr) !important;
+                        padding: 25px;
+                    }
+                }
+            }
+        }
+    }
+}

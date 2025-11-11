@@ -1,0 +1,74 @@
+.crud_form_wrapper {
+  .form_title_wrapper {
+    margin-bottom: 20px;
+
+    h4 {
+      color: var(--theme_text_clr);
+      font-family: $semi_bold_font;
+      font-size: 22px;
+    }
+  }
+
+  .custom_card {
+    .v-sheet {
+      // height: calc(100vh - 330px);
+    }
+  }
+
+  .form_wrapper {
+    .btn_wrapper {
+      @include flexEndAlignment;
+    }
+  }
+
+  .single_step_form_content_wrapper {
+    height: calc(100vh - 280px);
+    padding: 25px;
+    background-color: var(--theme_main_bg_clr);
+    @include borderRadius(10px);
+    overflow: auto;
+
+    // &::-webkit-scrollbar {
+    //   width: 0;
+    // }
+
+    .btn_wrapper {
+      @include flexEndAlignment;
+    }
+  }
+
+  .multi_steps_form_content_wrapper {
+    .tabs_wrapper {
+      .v-card {
+        // .v-tabs {}
+
+        .v-window {
+          &::-webkit-scrollbar {
+            width: 0;
+          }
+
+          overflow: auto !important;
+        }
+      }
+    }
+  }
+
+  .permission_card_wrapper {
+    min-height: 365px;
+    background-color: var(--theme_second_bg_clr);
+    margin-block: 10px;
+    border-radius: 10px;
+    @include simpleShadow;
+    border: 1px dashed var(--border_clr);
+    .card_title {
+      padding: 20px 15px !important;
+      border-bottom: 1px dashed var(--border_clr);
+      color: var(--main_theme_clr);
+      font-size: 18px;
+      text-align: center;
+    }
+    .card_body {
+      padding: 15px;
+    }
+  }
+}

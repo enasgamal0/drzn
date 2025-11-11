@@ -1,0 +1,21 @@
+.edit_lesson_modal_wrapper {
+    .main_body {
+        padding-block: 35px;
+        .edit_lesson_card {
+            width: 100%;
+            text-align: center;
+            h3 {
+                font-size: 2.8rem;
+                font-family: $bold_font;
+                color: var(--theme_text_clr);
+                margin-bottom: 10px;
+            }
+
+            form {
+                .btn_wrapper {
+                    @include flexCenterAlignment;
+                }
+            }
+        }
+    }
+}

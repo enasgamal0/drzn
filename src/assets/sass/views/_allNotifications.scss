@@ -1,0 +1,86 @@
+.all_notifications_wrapper {
+    .page_title {
+        @include flexSpaceBetweenAlignment;
+        h4 {
+            margin-block: 10px;
+            font-family: $bold_font;
+            color: var(--dark_main_theme_clr);
+        }
+        button {
+            color: var(--mid_red_clr);
+            font-size: 16px;
+            font-family: $semi_bold_font;
+        }
+    }
+    .empty_notifications_wrapper {
+        width: 100%;
+        height: calc(100vh - 380px);
+        @include flexCenterAlignment;
+        flex-direction: column;
+        row-gap: 30px;
+        .message_text {
+            color: var(--main_theme_clr);
+            font-family: $bold_font;
+        }
+    }
+    .single_notification_row {
+        padding: 15px;
+        margin-block: 20px;
+        background-color: var(--theme_main_bg_clr);
+        @include flexStartAlignment;
+        @include borderRadius(10px);
+        // @include simpleShadow;
+        border: 2px dashed var(--border_clr);
+
+        .notification_body {
+            width: 100%;
+            @include verticalFlexStartAlignment;
+            flex-direction: column;
+            row-gap: 9px;
+            cursor: pointer;
+            .notification_title {
+                margin-bottom: 5px;
+                line-height: 1.4;
+                color: var(--main_theme_clr);
+                font-size: 20px;
+                font-family: $semi_bold_font;
+            }
+
+            .notification_body,
+            .notification_date {
+                margin: 0;
+                line-height: 1.4;
+                color: var(--theme_text_clr);
+                font-size: 17px;
+                font-family: $medium_font;
+            }
+            .notification_date {
+                font-size: 15px;
+                margin: 0;
+            }
+        }
+
+        .delete_btn_wrapper {
+            width: 5%;
+            .delete_notification_btn {
+                @include softButtonStyle( var(--secondary_theme_clr) );
+                @include borderRadius(50%);
+                svg, i {
+                    color: var(--mid_red_clr);
+                }
+            }
+        }
+    }
+
+    @media screen {
+        .single_notification_row {
+            .notification_body {
+                width: 85%;
+            }
+    
+            .delete_btn_wrapper {
+                width: 15%;
+            }
+        }
+    }
+}

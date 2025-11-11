@@ -1,0 +1,653 @@
+nav {
+  position: relative;
+  width: 100%;
+  max-height: 68px;
+  padding: 10px 15px;
+  background-color: var(--theme_second_bg_clr);
+  @include borderRadius(10px);
+
+  .navbar_wrapper {
+    @include flexSpaceBetweenAlignment;
+    column-gap: 25px;
+
+    .welcome_message {
+      @include flexCenterAlignment;
+      column-gap: 5px;
+
+      h4 {
+        margin: 0;
+        color: var(--theme_text_clr);
+        font-size: 20px;
+      }
+
+      span {
+        font-size: 25px;
+      }
+    }
+
+    .navbar_btns_wrapper {
+      @include flexCenterAlignment;
+      column-gap: 70px;
+
+      .group {
+        @include flexCenterAlignment;
+        column-gap: 10px;
+
+        a {
+          position: relative;
+          text-decoration: none;
+          font-size: 25px;
+          font-family: $semi_bold_font;
+          color: var(--theme_text_clr);
+          padding: 4px 10px;
+
+          .badge {
+            padding: 0;
+            position: absolute;
+            top: -8px;
+            right: 2px;
+            display: block;
+            min-width: 17px;
+            height: 17px;
+            font-size: 12px;
+            color: var(--white_clr);
+            background-color: var(--main_theme_clr);
+            @include borderRadius(50%);
+            @include flexCenterAlignment;
+          }
+
+          .toolTip {
+            position: absolute;
+            bottom: -35px;
+            left: 0;
+            right: 0;
+            width: max-content;
+            padding: 0 8px;
+            font-size: 16px;
+            font-family: $medium_font;
+            background-color: var(--theme_second_bg_clr);
+            color: var(--theme_text_clr);
+            @include simpleShadow;
+            @include borderRadius(8px);
+            z-index: 10;
+            @include transitioning(0.3s);
+            transform-origin: top;
+            transform: scale(0);
+            opacity: 0;
+          }
+
+          &:hover {
+            .toolTip {
+              transform: scale(1);
+              opacity: 1;
+            }
+          }
+        }
+
+        button {
+          position: relative;
+          text-decoration: none;
+          font-size: 25px;
+          font-family: $semi_bold_font;
+          color: var(--theme_text_clr);
+          padding: 4px 10px;
+
+          .badge {
+            padding: 0;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            display: block;
+            min-width: 8px;
+            height: 8px;
+            font-size: 12px;
+            color: var(--white_clr);
+            background-color: var(--main_theme_clr);
+            @include borderRadius(50%);
+            @include flexCenterAlignment;
+          }
+
+          .toolTip {
+            position: absolute;
+            bottom: -35px;
+            left: 0;
+            right: 0;
+            width: max-content;
+            padding: 0 8px;
+            font-size: 16px;
+            font-family: $medium_font;
+            background-color: var(--theme_second_bg_clr);
+            color: var(--theme_text_clr);
+            @include simpleShadow;
+            @include borderRadius(8px);
+            z-index: 10;
+            @include transitioning(0.3s);
+            transform-origin: top;
+            transform: scale(0);
+            opacity: 0;
+          }
+
+          &:hover {
+            .toolTip {
+              transform: scale(1);
+              opacity: 1;
+            }
+          }
+
+          &.small_screens_navbar_toggeler {
+            display: none;
+          }
+        }
+
+        .ant-badge-count {
+          color: var(--white_clr);
+          font-size: 12px;
+          background: var(--main_theme_clr);
+          box-shadow: none;
+          transform: translate(25%, -40%);
+        }
+
+        .lang_toggler_wrapper {
+          .lang_toggeler_btn {
+            @include flexCenterAlignment;
+            width: 33px;
+            height: 33px;
+            color: var(--theme_text_clr);
+            font-size: 18px;
+            font-family: $semi_bold_font;
+            border: 1px solid var(--theme_text_clr);
+            @include borderRadius(10px);
+          }
+        }
+
+        .user_notification_content_wrapper {
+          position: relative;
+
+          .notifications_menu_wrapper {
+            position: absolute;
+            top: 130%;
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 350px;
+            max-width: max-content;
+            background-color: var(--theme_main_bg_clr);
+            @include borderRadius(10px);
+            @include midShadow;
+            z-index: 3;
+            overflow-y: hidden;
+
+            .notifications_menu_header {
+              padding: 20px;
+              background-color: var(--main_theme_clr);
+              @include flexCenterAlignment;
+              flex-direction: column;
+              row-gap: 10px;
+              @include customBorderRadius(10px, 10px, 0, 0);
+
+              h3,
+              h5 {
+                margin: 0;
+                color: var(--white_clr);
+                font-family: $semi_bold_font;
+              }
+            }
+
+            .all_notifications_route {
+              padding: 10px;
+              @include flexCenterAlignment;
+              background-color: var(--main_theme_clr);
+              text-decoration: none;
+              color: var(--white_clr);
+              font-size: 16px;
+            }
+
+            .empty_image {
+              padding-block: 20px;
+              @include flexCenterAlignment;
+            }
+
+            .notifications_menu {
+              margin: 0;
+              padding: 0;
+              list-style: none;
+              max-height: 330px;
+              overflow-y: auto;
+
+              &::-webkit-scrollbar {
+                width: 0;
+              }
+
+              .notifications_menu_item {
+                padding: 16px 12px;
+                @include flexStartAlignment;
+                column-gap: 8px;
+                @include transitioning(0.4s);
+                cursor: pointer;
+
+                &:hover {
+                  background-color: var(--soft_main_theme_clr);
+                }
+
+                &:not(:last-of-type) {
+                  border-bottom: 1px solid var(--very_light_theme_clr);
+                }
+
+                .icon_wrapper {
+                  width: 20%;
+
+                  .notification_icon_wrapper {
+                    @include flexCenterAlignment;
+                    width: 40px;
+                    height: 40px;
+                    background-color: var(--main_theme_clr);
+                    @include borderRadius(10px);
+
+                    svg,
+                    i {
+                      color: var(--white_clr);
+                      font-size: 18px;
+                    }
+                  }
+                }
+
+                .notification_body_wrapper {
+                  width: 100%;
+                  @include verticalFlexStartAlignment;
+                  flex-direction: column;
+                  row-gap: 9px;
+
+                  .notification_title {
+                    margin-bottom: 5px;
+                    line-height: 1.4;
+                    color: var(--main_theme_clr);
+                    font-size: 18px;
+                    font-family: $semi_bold_font;
+                  }
+
+                  .notification_body,
+                  .notification_date {
+                    margin: 0;
+                    line-height: 1.4;
+                    color: var(--theme_text_clr);
+                    font-size: 15px;
+                    font-family: $medium_font;
+                  }
+
+                  .notification_date {
+                    font-size: 13px;
+                    margin: 0;
+                  }
+                }
+
+                .delete_btn_wrapper {
+                  width: 15%;
+
+                  .delete_notification_btn {
+                    @include softButtonStyle(var(--secondary_theme_clr));
+                    @include borderRadius(50%);
+
+                    svg,
+                    i {
+                      color: var(--mid_red_clr);
+                    }
+                  }
+                }
+              }
+
+              .empty_image {
+                padding-block: 50px;
+                @include flexCenterAlignment;
+              }
+            }
+          }
+        }
+
+        .user_profile_menu_wrapper {
+          position: relative;
+
+          .user_profile_menu_btn {
+            @include flexCenterAlignment;
+            column-gap: 8px;
+
+            .avatar_wrapper {
+              width: 45px;
+              height: 45px;
+              border: 1px solid var(--main_theme_clr);
+              padding: 3px;
+              @include flexCenterAlignment;
+              @include borderRadius(50%);
+              overflow: hidden;
+
+              img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                @include borderRadius(50%);
+              }
+            }
+
+            .name_wrapper {
+              h3 {
+                margin: 0;
+                font-size: 16px;
+                color: var(--theme_text_clr);
+                font-family: $semi_bold_font;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .small_screens_navbar_wrapper,
+  .chats_drawer_wrapper {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 20;
+    @include flexCenterAlignment;
+    @include transitioning(0.5s);
+
+    &.active {
+      left: 0;
+    }
+
+    .close_btn {
+      position: absolute;
+      top: 25px;
+      left: 25px;
+
+      svg,
+      i {
+        color: var(--white_clr);
+        font-size: 25px;
+        @include transitioning(0.4s);
+      }
+
+      &:hover {
+        svg,
+        i {
+          color: var(--mid_red_clr);
+          transform: rotate(90deg) scale(1.1);
+        }
+      }
+    }
+
+    .small_screens_links {
+      list-style: none;
+      padding: 0;
+      min-height: 90vh;
+      max-height: 90vh;
+      margin-block: 5vh;
+      overflow-y: auto;
+
+      &::-webkit-scrollbar {
+        width: 0;
+      }
+
+      li {
+        padding-inline-start: 10px;
+        padding-block: 8px;
+        margin-block: 12px;
+
+        a {
+          text-decoration: none;
+          font-size: 25px;
+          font-family: $medium_font;
+          color: var(--white_clr);
+          @include transitioning(0.4s);
+
+          &:hover,
+          &.router-link-exact-active {
+            color: var(--main_theme_clr);
+          }
+
+          .route_content {
+            @include flexStartAlignment;
+            column-gap: 10px;
+
+            .route_text {
+              font-size: 20px;
+            }
+          }
+        }
+
+        button {
+          text-decoration: none;
+          font-size: 25px;
+          font-family: $medium_font;
+          color: var(--white_clr);
+          @include transitioning(0.4s);
+
+          &:hover,
+          &.router-link-exact-active {
+            color: var(--main_theme_clr);
+          }
+
+          .logout_btn {
+            @include flexStartAlignment;
+            column-gap: 10px;
+
+            .btn_text {
+              font-size: 22px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .chats_drawer_wrapper {
+    right: -100%;
+
+    .chats_list {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      position: fixed;
+      top: 0;
+      right: -100%;
+      min-width: 45%;
+      max-width: 45%;
+      min-height: 100vh;
+      max-height: 100vh;
+      overflow-y: auto;
+      @include transitioning(0.5s);
+      transition-delay: 0.2s;
+
+      &::-webkit-scrollbar {
+        width: 0;
+      }
+
+      background-color: var(--theme_second_bg_clr);
+
+      .chat_route_wrapper {
+        .chat_route_btn {
+          width: 100%;
+          padding: 30px 35px;
+          border-bottom: 2px solid var(--theme_main_bg_clr);
+          @include flexStartAlignment;
+          column-gap: 15px;
+          @include transitioning(0.5s);
+          overflow-x: hidden;
+
+          &:hover {
+            background-color: var(--soft_main_theme_clr);
+          }
+
+          .conversation_avatar_wrapper {
+            img {
+              @include borderRadius(50%);
+              object-fit: cover;
+            }
+          }
+
+          .conversation_details_wrapper {
+            max-width: 100%;
+
+            .name_and_last_message_date_wrapper {
+              margin-bottom: 10px;
+              width: 80%;
+              @include flexSpaceBetweenAlignment;
+
+              .name,
+              .last_message_date_wrapper {
+                color: var(--theme_text_clr);
+              }
+
+              .name {
+                text-align: start;
+                width: inherit;
+              }
+            }
+
+            .last_message {
+              color: var(--theme_text_clr);
+              max-width: 80%;
+              @include textEllipsis;
+            }
+          }
+        }
+      }
+    }
+
+    &.active {
+      right: 0;
+
+      .chats_list {
+        right: 0;
+      }
+    }
+  }
+}
+
+// Start:: Media Queries
+@media screen and (max-width: 850px) {
+  nav {
+    padding: 10px 5px;
+
+    .navbar_wrapper {
+      .welcome_message {
+        h4 {
+          font-size: 16px;
+        }
+        span {
+          font-size: 18px;
+        }
+      }
+
+      .navbar_btns_wrapper {
+        column-gap: 0;
+  
+        .group {
+          column-gap: 5px;
+  
+          .user_profile_menu_wrapper {
+            display: none;
+          }
+  
+          .lang_toggler_wrapper {
+            .lang_toggeler_btn {
+              width: 30px;
+              height: 30px;
+              font-size: 17px;
+              border-radius: 6px;
+            }
+          }
+  
+          .user_notification_content_wrapper {
+            .notifications_menu_wrapper {
+              min-width: 320px;
+              left: 160%;
+            }
+          }
+  
+          a {
+            &.chats_route {
+              display: none;
+            }
+          }
+  
+          button {
+            font-size: 20px;
+            padding: 4px 8px;
+  
+            &.theme_changer {
+              width: unset;
+              height: unset;
+  
+              svg,
+              i {
+                font-size: 20px;
+              }
+            }
+  
+            &.small_screens_navbar_toggeler {
+              display: block;
+              font-size: 22px;
+              color: var(--main_theme_clr);
+              @include flexCenterAlignment;
+            }
+          }
+        }
+      }
+    }
+
+    .chats_drawer_wrapper {
+      .chats_list {
+        min-width: 90%;
+        max-width: 90%;
+  
+        .chat_route_wrapper {
+          .chat_route_btn {
+            column-gap: 10px;
+            padding: 15px 8px;
+  
+            .conversation_avatar_wrapper {
+              img {
+                width: 75px;
+                height: 75px;
+              }
+            }
+  
+            .conversation_details_wrapper {
+              max-width: 90%;
+  
+              .name_and_last_message_date_wrapper {
+  
+                .name,
+                .last_message_date_wrapper {
+                  font-size: 15px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+// End:: Media Queries
+
+// Start:: Animations Keyframes
+@keyframes fixedAnimation {
+  0% {
+    position: fixed;
+    top: -100%;
+    width: 100%;
+  }
+
+  100% {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    border-bottom: 2px solid var(--soft_main_theme_clr);
+  }
+}
+
+// End:: Animations Keyframes

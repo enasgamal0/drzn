@@ -1,0 +1,46 @@
+.pdf_file_content {
+  position: relative;
+  min-height: 100vh;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 100%;
+    background-size: cover;
+    max-height: 600px;
+    // background-image: url("../media/logo/logo.png");
+    background-size: 100%;
+    opacity: 0.1;
+  }
+  .file_title {
+    text-align: center;
+    margin-block: 30px;
+    color: var(--main_theme_clr);
+    font-size: 22px;
+  }
+  .v-data-table {
+    .v-data-table__wrapper {
+      table {
+        thead {
+          background-color: var(--main_theme_clr);
+          tr {
+            th {
+              text-align: center;
+              color: var(--white_clr);
+            }
+          }
+        }
+        tbody {
+          tr {
+            td {
+              text-align: center;
+            }
+          }
+        }
+      }
+    }
+  }
+}

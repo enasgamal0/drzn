@@ -1,0 +1,19 @@
+.user_empty_message_wrapper {
+    height: 80vh;
+    @include flexCenterAlignment;
+    flex-direction: column;
+    row-gap: 15px;
+
+    .image_wrapper {
+        img {
+            object-fit: contain;
+        }
+    }
+
+    .text_wrapper {
+        .message_title {
+            color: var(--main_theme_clr);
+            font-family: $medium_font;
+        }
+    }
+}

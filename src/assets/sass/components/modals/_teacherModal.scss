@@ -1,0 +1,105 @@
+.teacher_modal_wrapper {
+    .main_body {
+        min-width: 40%;
+        .teacher_modal_wrapper {
+            .instructor_info_wrapper {
+                width: 100%;
+                padding: 10px;
+                border: 2px solid var(--secondary_theme_clr);
+                @include borderRadius(10px);
+                .title {
+                    margin-bottom: 25px;
+                    color: var(--theme_text_clr);
+                    font-size: 30px !important;
+                    font-family: $bold_font !important;
+                }
+        
+                .instructor_info {
+                    @include flexSpaceBetweenAlignment;
+        
+                    .card_wrapper {
+                        @include flexCenterAlignment;
+                        column-gap: 10px;
+        
+                        .image_wrapper {
+                            img {
+                                @include borderRadius(50%);
+                                object-fit: cover;
+                            }
+                        }
+        
+                        .name_and_count {
+                            .name {
+                                color: var(--theme_text_clr);
+                                font-family: $medium_font;
+                                margin-bottom: 5px;
+                            }
+                            .courses_count {
+                                color: var(--light_gray_clr);
+                                margin-bottom: 0;
+                            }
+                        }
+                    }
+                }
+        
+                .chat_route {
+                    @include softButtonStyle( var(--secondary_theme_clr) );
+                    @include flexCenterAlignment;
+                    width: 45px;
+                    height: 45px;
+                    svg, 
+                    i {
+                        font-size: 25px;
+                        color: var(--main_theme_clr);
+                    }
+                }
+            }
+    
+            .about_instructor {
+                width: 100%;
+                padding: 10px;
+                border: 2px solid var(--secondary_theme_clr);
+                @include borderRadius(10px);
+                .about_instructor_title {
+                    margin-bottom: 10px;
+                    color: var(--theme_text_clr);
+                    font-size: 30px !important;
+                    font-family: $bold_font !important;
+                }
+    
+                .text_wrapper {
+                    @include textWraper;
+                    line-height: 1.1;
+                }
+            }
+
+            .parent_info_form {
+                width: 100%;
+                padding: 10px;
+                border: 2px solid var(--secondary_theme_clr);
+                @include borderRadius(10px);
+
+                .parent_info_form_title {
+                    margin-bottom: 10px;
+                    color: var(--theme_text_clr);
+                    font-size: 25px !important;
+                    font-family: $bold_font !important;
+                }
+
+                .parent_info_form_subtitle {
+                    margin-bottom: 10px;
+                    color: var(--light_gray_clr);
+                    font-size: 20px !important;
+                    font-family: $medium_font !important;
+                }
+            }
+            .btn_wrapper {
+                @include flexCenterAlignment;
+                button {
+                    @include simpleButtonStyle;
+                    width: 200px;
+                }
+            }
+        }
+    }
+}

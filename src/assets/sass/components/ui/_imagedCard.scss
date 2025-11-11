@@ -1,0 +1,173 @@
+.imaged_card_wrapper {
+    padding: 5px;
+    border: 2px solid var(--secondary_theme_clr);
+    @include borderRadius(15px);
+
+    .image_wrapper {
+        position: relative;
+        height: 140px;
+
+        img {
+            width: 100%;
+            height: 100%;
+            @include borderRadius(15px);
+            object-fit: cover;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            @include borderRadius(15px);
+
+            .instructor_info_wrapper {
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+                @include flexStartAlignment;
+                column-gap: 10px;
+
+                img {
+                    width: 50px;
+                    height: 50px;
+                    @include borderRadius(50%);
+                }
+
+                .name {
+                    margin-bottom: 0;
+                    color: var(--white_clr);
+                    font-size: 18px;
+                    font-family: $semi_bold_font;
+                }
+
+                .rate {
+                    margin-bottom: 0;
+                    @include flexStartAlignment;
+                    column-gap: 5px;
+
+                    span {
+                        font-size: 18px;
+                        font-family: $semi_bold_font;
+                        color: var(--gold_clr);
+
+                        i,
+                        svg {
+                            font-size: 14px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .text_wrapper {
+        padding: 8px;
+        @include flexSpaceBetweenAlignment;
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .wrapper {
+
+        .course_name,
+        .courses_count,
+        .teachers_count,
+        .students_count,
+        .price,
+        .status,
+        .duration {
+            margin-bottom: 0;
+            font-size: 20px;
+            font-family: $semi_bold_font;
+            color: var(--theme_text_clr);
+        }
+
+        .start_date {
+            margin-bottom: 5px;
+            @include flexStartAlignment;
+            column-gap: 8px;
+
+            span {
+                font-size: 18px;
+                font-family: $semi_bold_font;
+                color: var(--theme_text_clr);
+
+                &.text {
+                    color: var(--light_gray_clr);
+                }
+            }
+        }
+
+        .price {
+            font-size: 25px;
+            color: var(--main_theme_clr);
+        }
+
+        .status {
+            font-size: 18px;
+            color: var(--main_theme_clr);
+
+            i,
+            svg {
+                font-size: 10px;
+                color: var(--main_theme_clr);
+            }
+        }
+
+        .duration {
+            span {
+                font-size: 20px;
+                font-family: $semi_bold_font;
+                color: var(--theme_text_clr);
+            }
+        }
+
+        .rate {
+            i,
+            svg {
+                color: var(--gold_clr);
+                font-size: 22px;
+            }
+            span{
+                font-size: 25px;
+                font-family: $bold_font;
+                color: var(--theme_text_clr)
+            }
+        }
+
+        .instructor_info_wrapper {
+            @include flexStartAlignment;
+            column-gap: 10px;
+
+            img {
+                width: 50px;
+                height: 50px;
+                @include borderRadius(50%);
+            }
+
+            .name {
+                margin-bottom: 0;
+                color: var(--theme_text_clr);
+                font-size: 18px;
+                font-family: $semi_bold_font;
+            }
+
+            .rate {
+                margin-bottom: 0;
+                @include flexStartAlignment;
+                column-gap: 5px;
+
+                span {
+                    font-size: 18px;
+                    font-family: $semi_bold_font;
+                    color: var(--gold_clr);
+
+                    i,
+                    svg {
+                        font-size: 14px;
+                    }
+                }
+            }
+        }
+    }
+}

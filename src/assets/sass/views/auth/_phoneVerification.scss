@@ -1,0 +1,45 @@
+.phone_verification_form_wrapper {
+    .verification_inputs_wrapper {
+        border: none;
+        background-color: transparent;
+        margin-block: 30px; 
+        @include flexSpaceAroundAlignment;
+        column-gap: 15px;
+        input[size="1"] {
+            width: 75px;
+            height: 60px;
+            text-align: center;
+            font-size: 18px;
+            font-family: $semi_bold_font;
+            border: 1px solid #D3D3D3;
+            @include borderRadius(8px);
+            background-color: var(--theme_inputs_clr);
+        }
+        button {
+            @include simpleButtonStyle;
+        }
+        &:last-of-type {
+            margin-block: 40px;
+        }
+    }
+
+    .timer_wrapper {
+        text-align: center;
+        h3 {
+            margin-top: 25px;
+            font-size: 22px;
+        }
+        .resend_btn_wrapper {
+            margin-top: 15px;
+            button {
+                color: var(--main_theme_clr);
+                font-size: 18px;
+                font-family: $semi_bold_font;
+                @include transitioning(0.4s);
+                &[disabled] {
+                    color: var(--light_gray_clr);
+                }
+            }
+        }
+    }
+}

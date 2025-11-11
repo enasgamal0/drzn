@@ -1,0 +1,73 @@
+// Start:: Root Element
+:root {
+  // =========== Start:: Theme Colors ===========
+  --theme_main_bg_clr: #f2f2f2;
+  --theme_second_bg_clr: #fff;
+  --theme_text_clr: #313131;
+  --theme_secondary_text_clr: #a8b1c1;
+  --main_theme_clr: #E1423D;
+  --dark_main_theme_clr: #E1423D;
+  --very_light_theme_clr: #d6d6d6;
+  --soft_main_theme_clr: #ff5c0042;
+  --secondary_theme_clr: #f2f2f2;
+  --theme_inputs_clr: #fff;
+  --simple_shadow_clr: rgba(225, 225, 225, 0.3);
+  --mid_shadow_clr: rgba(225, 225, 225, 0.6);
+  --border_clr: #d3d3d3;
+  --skeleton_loader_card_clr: #ebebeb;
+  // =========== End:: Theme Colors ===========
+
+  // =========== Start:: Base Colors ===========
+  --white_clr: #fff;
+  --lighter_gray_clr: #f7f7fa;
+  --light_gray_clr: #8d8d8d;
+  --mid_gray_clr: #313131;
+  --dark_gray_clr: #212121;
+  --mid_blue_clr: #103580;
+  --mid_green_clr: #E1423D;
+  --deep_red-clr: #810000;
+  --mid_red_clr: #dc3545;
+  --light_red_clr: #ff2159;
+  --soft_red_clr: #ffd8e2;
+  --gold_clr: #d8c022;
+  --soft_yellow_clr: #fff8cc;
+  // =========== End:: Base Colors ===========
+
+  // =========== Start:: Brands Colors ===========
+  --facebook_clr: #4267b2;
+  --twitter_clr: #1da1f2;
+  --whatsApp_clr: #25d366;
+  --telegram_clr: #0088cc;
+  --linkedin_clr: #2867b2;
+  --youtube_clr: #ff0000;
+  // =========== End:: Brands Colors ===========
+
+  // Start:: Dark Theme Colors
+  .dark_theme {
+    // =========== Start:: Theme Colors ===========
+    --theme_main_bg_clr: #1a1a1a;
+    --theme_second_bg_clr: #1f1f1f;
+    --dark_main_theme_clr: #E1423D;
+    --theme_text_clr: #fff;
+    --theme_secondary_text_clr: #fff;
+    --very_light_theme_clr: #424242;
+    --soft_main_theme_clr: #ff5c0042;
+    --secondary_theme_clr: #151c2e;
+    --theme_inputs_clr: #0d132266;
+    --simple_shadow_clr: rgba(12, 12, 12, 0.4);
+    --mid_shadow_clr: rgba(12, 12, 12, 0.6);
+    --cke_bottom: #3a3a3a;
+    // =========== End:: Theme Colors ===========
+  }
+  // End:: DARK THEME COLORS
+}
+// End:: Root Element
+
+// Start:: Arabic Fonts
+$light_font: "Cairo-Light";
+$regular_font: "Cairo-Regular";
+$medium_font: "Cairo-Medium";
+$semi_bold_font: "Cairo-SemiBold";
+$bold_font: "Cairo-Bold";
+$extra_bold_font: "Cairo-ExtraBold";
+// End:: Arabic Fonts
