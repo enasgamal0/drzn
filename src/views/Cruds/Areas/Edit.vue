@@ -31,14 +31,6 @@
             required
           />
           <!-- End:: Name Input -->
-          <!-- Start:: Country Input -->
-          <base-select-input
-            col="6"
-            :optionsList="countries"
-            :placeholder="$t('PLACEHOLDERS.country')"
-            v-model="data.country"
-          />
-          <!-- End:: Country Input -->
 
           <!-- Start:: Deactivate Switch Input -->
           <!-- <div class="input_wrapper switch_wrapper my-5 col-6">
@@ -91,7 +83,6 @@ export default {
       data: {
         name_ar: null,
         name_en: null,
-        country: null,
         active: true,
       },
       // End:: Data Collection To Send
@@ -101,7 +92,6 @@ export default {
 
       coordinates: [],
       areaPoints: [],
-      countries: [],
     };
   },
 
@@ -137,7 +127,7 @@ export default {
     // Start:: validate Form Inputs
     validateFormInputs() {
       this.isWaitingRequest = true;
-      if (!this.data.name_ar || !this.data.name_en || !this.data.country) {
+      if (!this.data.name_ar || !this.data.name_en) {
         if (!this.data.name_ar) {
           this.isWaitingRequest = false;
           this.$message.error(this.$t("VALIDATION.name_ar"));
@@ -146,11 +136,6 @@ export default {
         if (!this.data.name_en) {
           this.isWaitingRequest = false;
           this.$message.error(this.$t("VALIDATION.name_en"));
-          return;
-        }
-        if (!this.data.country) {
-          this.isWaitingRequest = false;
-          this.$message.error(this.$t("VALIDATION.country"));
           return;
         }
       } else {
@@ -171,14 +156,13 @@ export default {
       // Start:: Append Request Data
       REQUEST_DATA.append("name[ar]", this.data.name_ar);
       REQUEST_DATA.append("name[en]", this.data.name_en);
-      REQUEST_DATA.append("country_id", this.data.country?.id);
       REQUEST_DATA.append("_method", "PUT");
 
       // Start:: Append Request Data
       try {
         await this.$axios({
           method: "POST",
-          url: `areas/${this.$route.params.id}`,
+          url: `regions/${this.$route.params.id}`,
           data: REQUEST_DATA,
         });
         this.isWaitingRequest = false;
@@ -200,7 +184,6 @@ export default {
         });
         this.data.name_ar = res.data.data.Area.name_ar;
         this.data.name_en = res.data.data.Area.name_en;
-        this.data.country = res.data.data.Area.country;
         this.data.created_at = res.data.data.Area.created_at;
         this.data.active = res.data.data.Area.is_active;
       } catch (error) {
@@ -209,22 +192,10 @@ export default {
       }
     },
     // end show data
-    async getCountries() {
-      try {
-        let res = await this.$axios({
-          method: "GET",
-          url: `/countries?page=0&limit=0&is_active=1&ignorePermissionCheck=1`,
-        });
-        this.countries = res.data.data.data;
-      } catch (error) {
-        console.log(error.response.data.message);
-      }
-    },
   },
 
   created() {
     // Start:: Fire Methods
-    this.getCountries();
     this.showData();
     // End:: Fire Methods
   },

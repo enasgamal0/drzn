@@ -32,15 +32,6 @@
           />
           <!-- End:: Name Input -->
 
-          <!-- Start:: Country Input -->
-          <base-select-input
-            col="6"
-            :optionsList="countries"
-            :placeholder="$t('PLACEHOLDERS.country')"
-            v-model="data.country"
-          />
-          <!-- End:: Country Input -->
-
           <!-- Start:: Deactivate Switch Input -->
           <div class="input_wrapper switch_wrapper my-5 col-6">
             <v-switch
@@ -92,7 +83,6 @@ export default {
       data: {
         name_ar: null,
         name_en: null,
-        country: null,
         active: true,
       },
       // End:: Data Collection To Send
@@ -101,22 +91,10 @@ export default {
       EnRegex: /[\u0600-\u06FF]/,
 
       coordinates: [],
-      countries: [],
     };
   },
 
   methods: {
-    async getCountries() {
-      try {
-        let res = await this.$axios({
-          method: "GET",
-          url: `/countries?page=0&limit=0&is_active=1&ignorePermissionCheck=1`,
-        });
-        this.countries = res.data.data.data;
-      } catch (error) {
-        console.log(error.response.data.message);
-      }
-    },
     disabledDate(current) {
       return current && current < moment().startOf("day");
     },
@@ -170,10 +148,6 @@ export default {
         REQUEST_DATA.append("name[en]", this.data.name_en);
       }
 
-      if (this.data.country) {
-        REQUEST_DATA.append("country_id", this.data.country?.id);
-      }
-
       // if (this.$refs.map_point.coordinates) {
       //   this.$refs.map_point.coordinates.forEach((point, index) => {
       //     if (point) {
@@ -201,10 +175,6 @@ export default {
       }
     },
     // End:: Submit Form
-  },
-
-  mounted() {
-    this.getCountries();
   },
 };
 </script>

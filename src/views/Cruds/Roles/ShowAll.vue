@@ -418,7 +418,7 @@ export default {
         },
         {
           text: this.$t("TABLES.Admins.joiningDate"),
-          value: "created_at",
+          value: "updated_at",
           align: "center",
           sortable: false,
         },

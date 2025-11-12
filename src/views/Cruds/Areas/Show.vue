@@ -34,13 +34,6 @@
           <base-input
             col="6"
             type="text"
-            :placeholder="$t('PLACEHOLDERS.country')"
-            v-model.trim="data.country"
-            disabled
-          />
-          <base-input
-            col="6"
-            type="text"
             :placeholder="$t('PLACEHOLDERS.created_at')"
             v-model.trim="data.created_at"
             disabled
@@ -93,7 +86,6 @@ export default {
         name_ar: null,
         name_en: null,
         created_at: null,
-        country: null,
         count_order_finish: null,
         area_id: null,
         active: true,
@@ -155,13 +147,12 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `areas/${this.$route.params?.id}`,
+          url: `regions/${this.$route.params?.id}`,
         });
-        this.data.name_ar = res.data.data.Area.name_ar;
-        this.data.name_en = res.data.data.Area.name_en;
-        this.data.country = res.data.data.Area.country?.name;
-        this.data.created_at = res.data.data.Area.created_at;
-        this.data.active = res.data.data.Area.is_active;
+        this.data.name_ar = res.data.data.name_ar;
+        this.data.name_en = res.data.data.name_en;
+        this.data.created_at = res.data.data.created_at;
+        this.data.active = res.data.data.is_active;
         // this.data.count_order_finish = res.data.data.count_order_finish;
 
         // Convert points to an array of objects with numeric values

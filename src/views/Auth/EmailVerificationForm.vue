@@ -175,7 +175,7 @@ export default {
       try {
         let res = await this.$axios({
           method: "POST",
-          url: `auth/resend-otp`,
+          url: `auth/admin/forgot-password`,
           data: REQUEST_DATA,
           headers: {
             Authorization: `Bearer ${token}`,
@@ -220,9 +220,9 @@ export default {
 
       const REQUEST_DATA = new FormData();
       // Start:: Append Request Data
-      this.$axios.defaults.headers.common["Authorization"] =
+      /*this.$axios.defaults.headers.common["Authorization"] =
         "Bearer " +
-        localStorage.getItem("drzn_admin_dashboard_forget_pass_token");
+        localStorage.getItem("drzn_admin_dashboard_forget_pass_token");*/
       REQUEST_DATA.append(
         "code",
         this.firstNumber +
@@ -230,24 +230,32 @@ export default {
           this.thirdNumber +
           this.fourthNumber
       );
-      REQUEST_DATA.append("is_changed", 1);
+      REQUEST_DATA.append("email", this.getAuthenticatedUserData.email);
+      //REQUEST_DATA.append("is_changed", 1);
       // Start:: Append Request Data
 
       if (this.verificationType == "reset-password") {
         try {
           let res = await this.$axios({
             method: "POST",
-            url: `auth/verify-otp`,
+            url: `auth/admin/verify-password-reset-otp`,
             data: REQUEST_DATA,
           });
           this.isWaitingRequest = false;
-          localStorage.setItem(
+          /*localStorage.setItem(
             "drzn_admin_dashboard_reset_pass_token",
             res.data.data.access_token
+          );*/
+          localStorage.setItem(
+            "drzn_admin_dashboard_verification_code",
+            this.firstNumber +
+          this.secondNumber +
+          this.thirdNumber +
+          this.fourthNumber
           );
           this.$message.success(this.$t("MESSAGES.verifiedSuccessfully"));
           this.clearFormInputs();
-          localStorage.removeItem("drzn_admin_dashboard_email");
+          //localStorage.removeItem("drzn_admin_dashboard_email");
           this.$router.replace("/reset-password");
         } catch (error) {
           this.isWaitingRequest = false;

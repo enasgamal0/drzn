@@ -22,25 +22,16 @@
             <div class="row justify-content-center align-items-center w-100">
               <!-- Start:: Name Input -->
               <base-input
-                col="4"
+                col="5"
                 type="text"
                 :placeholder="$t('PLACEHOLDERS.name')"
                 v-model.trim="filterOptions.name"
               />
               <!-- End:: Name Input -->
 
-              <!-- Start:: Country Input -->
-              <base-select-input
-                col="4"
-                :optionsList="countries"
-                :placeholder="$t('PLACEHOLDERS.country')"
-                v-model="filterOptions.country"
-              />
-              <!-- End:: Country Input -->
-
               <!-- Start:: Status Input -->
               <base-select-input
-                col="4"
+                col="5"
                 :optionsList="activeStatuses"
                 :placeholder="$t('PLACEHOLDERS.status')"
                 v-model="filterOptions.is_active"
@@ -95,7 +86,7 @@
           </button>
         </div>
 
-        <div class="title_route_wrapper" v-if="$can('areas create', 'areas')">
+        <div class="title_route_wrapper" v-if="$can('create-location', 'المواقع') || $can('create-location', 'Locations')">
           <router-link to="/areas/create">
             {{ $t("PLACEHOLDERS.add_new_area") }}
           </router-link>
@@ -139,7 +130,7 @@
             class="activation"
             dir="ltr"
             style="z-index: 1"
-            v-if="$can('areas activate', 'areas')"
+            v-if="$can('read-location:read-inactive', 'Locations') || $can('read-location:read-inactive', 'المواقع')"
           >
             <v-switch
               class="mt-2"
@@ -158,7 +149,7 @@
           <div class="actions">
             <a-tooltip
               placement="bottom"
-              v-if="$can('areas delete', 'areas')"
+              v-if="$can('delete-location', 'المواقع') || $can('delete-location', 'Locations')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.delete") }}</span>
@@ -169,7 +160,7 @@
             </a-tooltip>
             <a-tooltip
               placement="bottom"
-              v-if="$can('areas edit', 'areas')"
+              v-if="$can('update-location', 'المواقع') || $can('update-location', 'Locations')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.edit") }}</span>
@@ -181,7 +172,7 @@
             </a-tooltip>
             <a-tooltip
               placement="bottom"
-              v-if="$can('areas show', 'areas')"
+              v-if="$can('read-location', 'المواقع') || $can('read-location', 'Locations')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.show") }}</span>
@@ -312,7 +303,6 @@ export default {
       filterFormIsActive: false,
       filterOptions: {
         name: null,
-        country: null,
         is_active: null,
         from_date: null,
         to_date: null,
@@ -331,12 +321,6 @@ export default {
         {
           text: this.$t("PLACEHOLDERS.name"),
           value: "name",
-          sortable: false,
-          align: "center",
-        },
-        {
-          text: this.$t("PLACEHOLDERS.country"),
-          value: "country.name",
           sortable: false,
           align: "center",
         },
@@ -382,7 +366,6 @@ export default {
         items_per_page: 6,
       },
       // End:: Pagination Data
-      countries: [],
       areas: [],
       cites: [],
       selectedHours: [],
@@ -401,17 +384,6 @@ export default {
   },
 
   methods: {
-    async getCountries() {
-      try {
-        let res = await this.$axios({
-          method: "GET",
-          url: `/countries?page=0&limit=0&is_active=1&ignorePermissionCheck=1`,
-        });
-        this.countries = res.data.data.data;
-      } catch (error) {
-        console.log(error.response.data.message);
-      }
-    },
     async getDays() {
       try {
         let res = await this.$axios({
@@ -446,7 +418,6 @@ export default {
     },
     async resetFilter() {
       this.filterOptions.name = null;
-      this.filterOptions.country = null;
       this.filterOptions.is_active = null;
       this.filterOptions.from_date = null;
       this.filterOptions.to_date = null;
@@ -476,21 +447,20 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: "areas",
+          url: "regions",
           params: {
             page: this.paginations.current_page,
-            name: this.filterOptions.name,
-            is_active: this.filterOptions.is_active?.value,
-            country_id: this.filterOptions.country?.id,
+            "filter[name]": this.filterOptions.name,
+            "filter[is_active]": this.filterOptions.is_active?.value,
             // "created_at[0]": this.filterOptions.from_date,
             // "created_at[1]": this.filterOptions.to_date,
           },
         });
         this.loading = false;
-        this.tableRows = res.data.data.data;
+        this.tableRows = res.data.data;
         // console.log(res.data.data.items?.id.city.name);
-        this.paginations.last_page = res.data.data.meta.last_page;
-        this.paginations.items_per_page = res.data.data.meta.per_page;
+        this.paginations.last_page = res.data.meta.last_page;
+        this.paginations.items_per_page = res.data.meta.per_page;
       } catch (error) {
         this.loading = false;
         console.log(error.response.data.message);
@@ -515,9 +485,11 @@ export default {
       // REQUEST_DATA.append("_method", "PUT");
       try {
         await this.$axios({
-          method: "POST",
-          url: `areas/status/${item.id}`,
-          data: REQUEST_DATA,
+          method: "PATCH",
+          url: `regions/${item.id}`,
+          data: {
+            is_active: item.is_active,
+          },
         });
         this.setTableRows();
         this.$message.success(this.$t("MESSAGES.changeActivation"));
@@ -569,9 +541,6 @@ export default {
     }
     this.setTableRows();
     // End:: Fire Methods
-  },
-  mounted() {
-    this.getCountries();
   },
 };
 </script>

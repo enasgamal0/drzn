@@ -235,11 +235,11 @@ export function mapPermissionsToAbilityCombos(permissions = []) {
   const combosMap = new Map();
 
   permissions.forEach((permission) => {
-    if (permission?.action && permission?.subject) {
-      const key = `${permission.action}::${permission.subject}`;
+    if (permission?.name && permission?.subject) {
+      const key = `${permission.name}::${permission.subject}`;
       if (!combosMap.has(key)) {
         combosMap.set(key, {
-          action: permission.action,
+          name: permission.name,
           subject: permission.subject,
         });
       }
@@ -247,12 +247,12 @@ export function mapPermissionsToAbilityCombos(permissions = []) {
     }
 
     const legacyCombos = mapPermissionNameToLegacyCombos(
-      permission?.name || permission?.action
+      permission?.name || permission?.name
     );
 
     legacyCombos.forEach((combo) => {
-      if (combo?.action && combo?.subject) {
-        const key = `${combo.action}::${combo.subject}`;
+      if (combo?.name && combo?.subject) {
+        const key = `${combo.name}::${combo.subject}`;
         if (!combosMap.has(key)) {
           combosMap.set(key, combo);
         }

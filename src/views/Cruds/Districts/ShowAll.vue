@@ -397,7 +397,7 @@ export default {
         console.log("this.filterOptions.name", this.filterOptions);
         let res = await this.$axios({
           method: "GET",
-          url: "districts",
+          url: "regions",
           params: {
             page: this.paginations.current_page,
             name: this.filterOptions.name,
@@ -405,10 +405,10 @@ export default {
           },
         });
         this.loading = false;
-        this.tableRows = res.data.data.data;
+        this.tableRows = res.data.data;
         // console.log(res.data.data.items?.id.district.name);
-        this.paginations.last_page = res.data.data.meta.last_page;
-        this.paginations.items_per_page = res.data.data.meta.per_page;
+        this.paginations.last_page = res.data.meta.last_page;
+        this.paginations.items_per_page = res.data.meta.per_page;
       } catch (error) {
         this.loading = false;
         console.log(error.response.data.message);

@@ -55,9 +55,15 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "ResetPasswordForm",
-
+  computed: {
+    ...mapGetters({
+      getAuthenticatedUserData: "AuthenticationModule/getAuthenticatedUserData",
+    }),
+  },
   data() {
     return {
       // Start:: Loader Data
@@ -121,6 +127,8 @@ export default {
         "password_confirmation",
         this.resetPasswordData.confirmPassword
       );
+      REQUEST_DATA.append("email", localStorage.getItem("drzn_admin_dashboard_email"));
+      REQUEST_DATA.append("code", localStorage.getItem("drzn_admin_dashboard_verification_code"));
       // End:: Append Request Data
       const token = localStorage.getItem(
         "drzn_admin_dashboard_forget_pass_token"
@@ -138,6 +146,7 @@ export default {
         this.$message.success(this.$t("MESSAGES.editedSuccessfully"));
         localStorage.removeItem("drzn_admin_dashboard_forget_pass_token");
         localStorage.removeItem("drzn_admin_dashboard_reset_pass_token");
+        localStorage.removeItem("drzn_admin_dashboard_email");
         this.clearFormInputs();
         this.$router.replace("/");
       } catch (error) {

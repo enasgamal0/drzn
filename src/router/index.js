@@ -3314,7 +3314,7 @@ router.beforeEach((to, from, next) => {
 
     if (
       abilityCombos.some(
-        (combo) => combo.action === action && combo.subject === subject
+        (combo) => combo.name === name && combo.subject === subject
       )
     ) {
       return next();

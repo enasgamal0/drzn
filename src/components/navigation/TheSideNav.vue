@@ -581,9 +581,8 @@
       <!-- End:: services Route -->
 
       <!-- Start:: places Route -->
-      <div class="side_routes_wrapper" v-if="
-          $can('countries index', 'countries') || $can('areas index', 'areas') || $can('cities index', 'cities') || $can('districts index', 'districts')
-          ">
+          <!-- $can('countries index', 'countries') || $can('areas index', 'areas') || $can('cities index', 'cities') || $can('districts index', 'districts') -->
+      <div class="side_routes_wrapper" v-if="true">
         <a-menu
           style="width: 100%"
           mode="vertical"
@@ -1366,35 +1365,39 @@ export default {
           key: "dashboard_places",
           title: this.$t("PLACEHOLDERS.places"),
           icon: require("@/assets/media/icons/ui_icons/addresses.svg"),
-          hasPermission:
-          this.$can("countries index", "countries") ||
-            this.$can("areas index", "areas") ||
-            this.$can("cities index", "cities") ||
-            this.$can("districts index", "districts"),
+          hasPermission: true,
+          // this.$can("countries index", "countries") ||
+          //   this.$can("areas index", "areas") ||
+          //   this.$can("cities index", "cities") ||
+          //   this.$can("districts index", "districts"),
           children: [
-            {
-              key: "countries",
-              title: this.$t("PLACEHOLDERS.manage_countries"),
-              route: "/countries/all",
-              hasPermission: this.$can("countries index", "countries"),
-            },
+            // {
+            //   key: "countries",
+            //   title: this.$t("PLACEHOLDERS.manage_countries"),
+            //   route: "/countries/all",
+            //   hasPermission: true,
+            //   // hasPermission: this.$can("countries index", "countries"),
+            // },
             {
               key: "areas",
               title: this.$t("PLACEHOLDERS.manage_areas"),
               route: "/areas/all",
-              hasPermission: this.$can("areas index", "areas"),
+              hasPermission: true,
+              // hasPermission: this.$can("areas index", "areas"),
             },
             {
               key: "cities",
               title: this.$t("PLACEHOLDERS.cities"),
               route: "/cities/all",
-              hasPermission: this.$can("cities index", "cities"),
+              hasPermission: true,
+              // hasPermission: this.$can("cities index", "cities"),
             },
             {
               key: "districts",
               title: this.$t("PLACEHOLDERS.districts"),
               route: "/districts/all",
-              hasPermission: this.$can("districts index", "districts"),
+              hasPermission: true,
+              // hasPermission: this.$can("districts index", "districts"),
             },
           ],
         },
@@ -1439,13 +1442,14 @@ export default {
               key: "contact",
               title: this.$t("PLACEHOLDERS.contact_admins"),
               route: "/contact_settings",
-              hasPermission: this.$can("settings create", "settings"),
+              //hasPermission: this.$can("settings create", "settings"),
+              hasPermission: true,
             },
             {
               key: "AboutUs",
               title: this.$t("SIDENAV.AppContent.aboutUs"),
               route: "/app-content/about-us",
-              hasPermission: this.$can("settings create", "settings"),
+              hasPermission: true,
             },
             // {
             //   key: "addresses",
@@ -1457,19 +1461,19 @@ export default {
               key: "termsAndConditions",
               title: this.$t("SIDENAV.AppContent.termsAndConditions"),
               route: "/app-content/terms",
-              hasPermission: this.$can("settings create", "settings"),
+              hasPermission: true,
             },
             {
               key: "privacyPolicy",
               title: this.$t("SIDENAV.AppContent.privacyPolicy"),
               route: "/app-content/policy",
-              hasPermission: this.$can("settings create", "settings"),
+              hasPermission: true,
             },
             {
               key: "delete-account",
               title: this.$t("PLACEHOLDERS.how_to_delete_account"),
               route: "/app-content/delete-account",
-              hasPermission: this.$can("settings create", "settings"),
+              hasPermission: true,
             },
             // {
             //   key: "vision",

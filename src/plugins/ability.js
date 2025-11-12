@@ -27,8 +27,8 @@ export default AbilityBuilder.define((can) => {
   }
 
   abilityCombos.forEach((combo) => {
-    if (combo?.action && combo?.subject) {
-      can(combo.action, combo.subject);
+    if (combo?.name && combo?.subject) {
+      can(combo.name, combo.subject);
     }
   });
 });
