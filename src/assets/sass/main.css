@@ -3485,7 +3485,8 @@ span.reset_btn {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  flex-direction: column;
+  /* flex-direction: column; */
+  align-items: center;
   background-image: none;
   padding: 0;
   box-shadow: none;
@@ -3602,7 +3603,8 @@ span.reset_btn {
   background-position: -18%;
 }
 .cards_wrapper .content_wrapper .wrapper .item_data_card .card_title {
-  width: 90%;
+  /* width: 90%; */
+  margin: auto;
 }
 .cards_wrapper .content_wrapper .wrapper .item_data_card .card_title h5 {
   font-size: 18px;

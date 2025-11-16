@@ -5,7 +5,7 @@
       <h4>{{ $t("TITLES.addRole") }}</h4>
     </div>
     <div class="col-12 text-end">
-      <v-btn @click="$router.go(-1)" style="color: #E1423D">
+      <v-btn @click="$router.go(-1)" style="color: #e1423d">
         <i class="fas fa-backward"></i>
       </v-btn>
     </div>
@@ -41,7 +41,10 @@
 
           <!-- Start:: Permissions -->
           <div class="col-12">
-            <div class="row" v-if="allSystemPermissions">
+            <div
+              class="row"
+              v-if="groupedPermissions && groupedPermissions.length"
+            >
               <div class="btn_wrapper">
                 <button
                   class="primary_btn"
@@ -53,38 +56,37 @@
               </div>
 
               <div
-                v-for="permission in allSystemPermissions"
-                :key="permission.name"
+                v-for="group in groupedPermissions"
+                :key="group.subject"
                 class="col-md-6"
               >
                 <div class="permission_card_wrapper">
-                  <p class="card_title">{{ permission.name }}</p>
+                  <p class="card_title">{{ group.subject }}</p>
                   <div class="card_body">
                     <div class="input_wrapper switch_wrapper my-5">
                       <v-switch
                         color="green"
                         :label="$t('PLACEHOLDERS.choose_all')"
-                        :value="permission.name"
-                        :input-value="isAllSelected(permission)"
-                        @change="toggleAllPermission(permission)"
+                        :model-value="isAllSelected(group)"
+                        @update:model-value="toggleAllPermission(group)"
+                        :input-value="isAllSelected(group)"
+                        @change="toggleAllPermission(group)"
                         hide-details
                       ></v-switch>
                     </div>
                     <div class="row">
                       <div
-                        v-for="(item, index) in permission.controls"
-                        :key="item.id"
+                        v-for="item in group.permissions"
+                        :key="item.name"
                         class="col-6"
-                        v-if="!(index === 0 && item.name === permission.name)"
                       >
                         <div class="input_wrapper switch_wrapper my-5">
                           <v-switch
                             color="green"
-                            :label="item.name"
-                            :value="item.id"
+                            :label="item.label"
+                            :value="item.name"
                             v-model="data.permissions"
                             hide-details
-                            @click="handleSwitchChange(permission)"
                           ></v-switch>
                         </div>
                       </div>
@@ -160,21 +162,40 @@ export default {
       allSystemPermissions: "PermissionsModule/allSystemPermissions",
     }),
     // End:: Vuex Getters
+    groupedPermissions() {
+      if (!this.allSystemPermissions) return [];
+      const subjectToPermissions = {};
+      this.allSystemPermissions.forEach((perm) => {
+        if (!perm || !perm.subject) return;
+        if (!subjectToPermissions[perm.subject]) {
+          subjectToPermissions[perm.subject] = [];
+        }
+        subjectToPermissions[perm.subject].push({
+          name: perm.name,
+          label: perm.label,
+        });
+      });
+      return Object.keys(subjectToPermissions).map((subject) => ({
+        subject,
+        permissions: subjectToPermissions[subject],
+      }));
+    },
   },
 
   methods: {
-    isAllSelected(permission) {
-      return permission.controls?.every((item) =>
-        this.data.permissions.includes(item.id)
+    isAllSelected(group) {
+      if (!group || !group.permissions || group.permissions.length === 0)
+        return false;
+      return group.permissions.every((item) =>
+        this.data.permissions.includes(item.name)
       );
     },
-    toggleAllPermission(permission) {
-      const allSelected = this.isAllSelected(permission);
-
-      permission.controls.forEach((item) => {
-        const index = this.data.permissions.indexOf(item.id);
+    toggleAllPermission(group) {
+      const allSelected = this.isAllSelected(group);
+      group.permissions.forEach((item) => {
+        const index = this.data.permissions.indexOf(item.name);
         if (!allSelected && index === -1) {
-          this.data.permissions.push(item.id);
+          this.data.permissions.push(item.name);
         } else if (allSelected && index !== -1) {
           this.data.permissions.splice(index, 1);
         }
@@ -204,25 +225,22 @@ export default {
     // Function to check all switches when the button is clicked
     checkAllSwitches() {
       // Check if any switch in the group is unchecked
-      const allChecked = this.allSystemPermissions.every((permission) => {
-        return Object.values(permission.controls).every((item) => {
-          return this.data.permissions.includes(item.id);
-        });
-      });
+      const allChecked =
+        this.groupedPermissions.length > 0 &&
+        this.groupedPermissions.every((group) =>
+          group.permissions.every((item) =>
+            this.data.permissions.includes(item.name)
+          )
+        );
 
       // If all are checked, uncheck them; otherwise, check them
-      this.allSystemPermissions.forEach((permission) => {
-        Object.values(permission.controls).forEach((item) => {
-          // Fix here: use Object.values()
-          const index = this.data.permissions.indexOf(item.id);
-          if (allChecked) {
-            if (index !== -1) {
-              this.data.permissions.splice(index, 1);
-            }
-          } else {
-            if (index === -1) {
-              this.data.permissions.push(item.id);
-            }
+      this.groupedPermissions.forEach((group) => {
+        group.permissions.forEach((item) => {
+          const index = this.data.permissions.indexOf(item.name);
+          if (allChecked && index !== -1) {
+            this.data.permissions.splice(index, 1);
+          } else if (!allChecked && index === -1) {
+            this.data.permissions.push(item.name);
           }
         });
       });
@@ -259,7 +277,7 @@ export default {
       REQUEST_DATA.append("name[en]", this.data.name_en);
       // REQUEST_DATA.append("is_active", +this.data.active);
       this.data.permissions.forEach((element) => {
-        REQUEST_DATA.append("role_permissions[]", element);
+        REQUEST_DATA.append("permissions[]", element); // element is the permission name
       });
       // Start:: Append Request Data
 
@@ -278,55 +296,6 @@ export default {
       }
     },
     // End:: Submit Form
-
-    handleSwitchChange(permission) {
-      console.log(this.data.permissions);
-
-      const indexPermission = permission.controls.find(
-        (p) => p.key === "index"
-      );
-
-      if (permission.key === "index") {
-        // Toggle the "index" switch
-        if (this.data.permissions.includes(permission.name)) {
-          // If the "index" switch is deactivated, remove it from this.data.permissions
-          const indexPermissionIndex = this.data.permissions.indexOf(
-            indexpermission.name
-          );
-          if (indexPermissionIndex !== -1) {
-            this.data.permissions.splice(indexPermissionIndex, 1);
-          }
-        } else {
-          // If the "index" switch is activated, add it to this.data.permissions
-          if (!this.data.permissions.includes(indexpermission.name)) {
-            this.data.permissions.push(indexpermission.name);
-          }
-        }
-      } else {
-        // For other switches
-        if (!this.data.permissions.includes(permission.name)) {
-          // If a switch other than "index" is activated, make the "index" switch active
-          if (!this.data.permissions.includes(indexpermission.name)) {
-            this.data.permissions.push(indexpermission.name);
-          }
-          // Add the current switch to this.data.permissions
-          this.data.permissions.push(permission.name);
-        } else {
-          // If a switch other than "index" is deactivated, remove it from this.data.permissions
-          // const indexPermissionIndex = this.data.permissions.indexOf(
-          //   indexpermission.name
-          // );
-          // if (indexPermissionIndex !== -1) {
-          //   this.data.permissions.splice(indexPermissionIndex, 1);
-          // }
-          // Remove the current switch from this.data.permissions
-          const permissionIndex = this.data.permissions.indexOf(permission.name);
-          if (permissionIndex !== -1) {
-            this.data.permissions.splice(permissionIndex, 1);
-          }
-        }
-      }
-    },
   },
 
   async created() {

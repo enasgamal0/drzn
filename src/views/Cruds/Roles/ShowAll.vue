@@ -75,7 +75,7 @@
             <i class="fal fa-search"></i>
           </button>
         </div>
-        <div class="title_route_wrapper" v-if="$can('roles index', 'roles')">
+        <div class="title_route_wrapper" v-if="$can('create-role', 'الأدوار والصلاحيات') || $can('create-role', 'Roles & Permissions')">
           <router-link to="/roles/create">
             {{ $t("BUTTONS.addRole") }}
           </router-link>
@@ -132,21 +132,21 @@
               v-if="item.permissions?.length > 0"
             >
               <div
-                v-for="element in item.permissions"
-                :key="element.id"
+                v-for="group in groupPermissionsBySubject(item.permissions)"
+                :key="group.subject"
                 class="content_wrapper"
               >
-                <p class="group_title">{{ element.name }}</p>
+                <p class="group_title">{{ group.subject }}</p>
 
                 <div class="wrapper">
                   <div
                     class="item_data_card"
-                    v-for="permission in element.controls"
+                    v-for="permission in group.permissions"
                     :key="permission.name"
                   >
                     <div class="card_title">
                       <h5>
-                        {{ permission.name }}
+                        {{ permission.label }}
                       </h5>
                     </div>
                   </div>
@@ -175,13 +175,13 @@
         <!-- Start:: Actions -->
         <template v-slot:[`item.actions`]="{ item }">
           <div class="actions">
-            <span class="blue-grey--text text--darken-1" v-if="item.id === 1">
-              <i class="far fa-horizontal-rule"></i>
+            <span class="blue-grey--text text--darken-1" v-if="item.id === '00000000-0000-0000-0000-000000000001'">
+              <!-- <i class="far fa-horizontal-rule"></i> -->
             </span>
 
             <a-tooltip
               placement="bottom"
-              v-if="item.id !== 1 && $can('roles edit', 'roles')"
+              v-if="item.id !== '00000000-0000-0000-0000-000000000001' && $can('update-role', 'الأدوار والصلاحيات') || $can('update-role', 'Roles & Permissions')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.edit") }}</span>
@@ -193,7 +193,7 @@
 
             <a-tooltip
               placement="bottom"
-              v-if="item.id !== 1 && $can('roles delete', 'roles')"
+              v-if="item.id !== '00000000-0000-0000-0000-000000000001' && $can('delete-role', 'الأدوار والصلاحيات') || $can('delete-role', 'Roles & Permissions')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.delete") }}</span>
@@ -202,8 +202,7 @@
                 <i class="fal fa-trash-alt"></i>
               </button>
             </a-tooltip>
-
-            <template v-if="$can('roles activate', 'roles') && item.id !== 1">
+            <template v-if="($can('update-role', 'الأدوار والصلاحيات') || $can('update-role', 'Roles & Permissions')) && item.id !== '00000000-0000-0000-0000-000000000001'">
               <a-tooltip placement="bottom" v-if="!item.is_active">
                 <template slot="title">
                   <span>{{ $t("BUTTONS.activate") }}</span>
@@ -505,11 +504,11 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: "roles",
+          url: "roles?include=permissions",
           params: {
             page: this.paginations.current_page,
-            name: this.filterOptions.name,
-            status: this.filterOptions.status?.value,
+            "search": this.filterOptions.name,
+            "filter[is_active]": this.filterOptions.status?.value,
           },
         });
         this.loading = false;
@@ -528,6 +527,23 @@ export default {
     selectDeactivateItem(item) {
       this.dialogDeactivate = true;
       this.itemToChangeActivationStatus = item;
+    },
+    // Group flat permissions by subject for display in expanded row
+    groupPermissionsBySubject(permissions) {
+      const subjectToPermissions = {};
+      if (Array.isArray(permissions)) {
+        permissions.forEach((permission) => {
+          const subject = permission?.subject || this.$t("TABLES.noData");
+          if (!subjectToPermissions[subject]) {
+            subjectToPermissions[subject] = [];
+          }
+          subjectToPermissions[subject].push(permission);
+        });
+      }
+      return Object.keys(subjectToPermissions).map((subject) => ({
+        subject,
+        permissions: subjectToPermissions[subject],
+      }));
     },
     async HandlingItemActivationStatus(selectedItem) {
       this.dialogDeactivate = false;

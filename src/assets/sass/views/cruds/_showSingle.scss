@@ -115,7 +115,8 @@
   &.files {
     .item_data_card {
       @include flexStartAlignment;
-      flex-direction: column;
+      /* flex-direction: column; */
+      align-items: center;
       background-image: none;
       padding: 0;
       box-shadow: none;
@@ -224,7 +225,8 @@
         }
 
         .card_title {
-          width: 90%;
+          // width: 90%;
+          margin: auto;
           h5 {
             font-size: 18px;
             font-family: $medium_font;

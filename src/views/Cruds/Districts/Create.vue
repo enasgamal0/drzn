@@ -106,9 +106,9 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `cities?page=0&limit=0&is_active=1&ignorePermissionCheck=1`,
+          url: `cities?paginate=false&filter[is_active]=true`,
         });
-        this.cities = res.data.data.data;
+        this.cities = res.data.data;
       } catch (error) {
         console.log(error.response.data.message);
       }

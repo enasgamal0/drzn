@@ -2,7 +2,7 @@
   <div class="crud_form_wrapper">
     <!-- Start:: Title -->
     <div class="form_title_wrapper">
-      <h4>{{ $t("TITLES.editCity") }}</h4>
+      <h4>{{ $t("PLACEHOLDERS.edit_city_data") }}</h4>
     </div>
     <div class="col-12 text-end">
       <v-btn @click="$router.go(-1)" style="color: #E1423D">
@@ -31,6 +31,17 @@
             required
           />
           <!-- End:: Name Input -->
+
+          <!-- Start:: Region Select -->
+          <base-select-input
+            col="6"
+            :optionsList="regions"
+            :placeholder="$t('PLACEHOLDERS.region')"
+            v-model="data.region"
+            required
+          />
+          <!-- End:: Region Select -->
+
           <!-- Start:: Deactivate Switch Input -->
           <!-- <div class="input_wrapper switch_wrapper my-5 col-6">
             <v-switch
@@ -65,9 +76,9 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import moment from "moment";
 export default {
-  name: "EditCity",
+  name: "CreateCity",
 
   data() {
     return {
@@ -75,34 +86,67 @@ export default {
       isWaitingRequest: false,
       // End:: Loader Control Data
 
+      file: null,
+      fileType: "",
+
       // Start:: Data Collection To Send
       data: {
         name_ar: null,
         name_en: null,
-        active: null,
+        region: null,
+        active: true,
       },
       // End:: Data Collection To Send
+      cities: [],
+      regions: [],
+      arabicRegex: /^[\u0600-\u06FF\s]+$/,
+      EnRegex: /[\u0600-\u06FF]/,
+
+      coordinates: [],
+      cityPoints: [],
     };
   },
 
-  computed: {
-    ...mapGetters({
-      getAppLocale: "AppLangModule/getAppLocale",
-    }),
-  },
-
   methods: {
-    async getCities() {
+    async getRegions() {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `cities`,
+          url: `regions?paginate=false&filter[is_active]=true`,
         });
-        this.cities = res.data.data;
+        this.regions = res.data.data;
       } catch (error) {
         console.log(error.response.data.message);
       }
     },
+    disabledDate(current) {
+      return current && current < moment().startOf("day");
+    },
+
+    onCopy(event) {
+      event.preventDefault();
+    },
+    onPaste(event) {
+      event.preventDefault();
+    },
+
+    validateInput() {
+      // Remove non-Arabic characters from the input
+      this.data.nameAr = this.data.nameAr.replace(/[^\u0600-\u06FF\s]/g, "");
+    },
+    removeArabicCharacters() {
+      this.data.nameEn = this.data.nameEn.replace(this.EnRegex, "");
+    },
+
+    handleFileSelected({ file, fileType }) {
+      this.file = file; // Store the selected file in your data
+      this.fileType = fileType; // Store the selected file in your data
+    },
+    handleFileRemoved() {
+      this.file = null; // Reset the file when it's removed
+      this.fileType = "";
+    },
+
     // Start:: validate Form Inputs
     validateFormInputs() {
       this.isWaitingRequest = true;
@@ -121,23 +165,30 @@ export default {
         this.submitForm();
       }
     },
+    // End:: validate Form Inputs
 
+    handleSaveCity(coordinates) {
+      // Handle the saved area coordinates from the child component
+
+      this.coordinates = coordinates;
+    },
+
+    // Start:: Submit Form
     async submitForm() {
       const REQUEST_DATA = new FormData();
       // Start:: Append Request Data
-
-      if (this.data.name_ar) {
-        REQUEST_DATA.append("name[ar]", this.data.name_ar);
-      }
-      if (this.data.name_en) {
-        REQUEST_DATA.append("name[en]", this.data.name_en);
-      }
-      REQUEST_DATA.append("is_active", this.data.active ? 1 : 0);
+      REQUEST_DATA.append("name[ar]", this.data.name_ar);
+      REQUEST_DATA.append("name[en]", this.data.name_en);
       REQUEST_DATA.append("_method", "PUT");
+      if (this.data.region) {
+        REQUEST_DATA.append("region_id", this.data.region?.id);
+      }
+
+      // Start:: Append Request Data
       try {
         await this.$axios({
-          method: "POST",
-          url: `cities/${this.$route.params?.id}`,
+          method: "PATCH",
+          url: `cities/${this.$route.params.id}`,
           data: REQUEST_DATA,
         });
         this.isWaitingRequest = false;
@@ -148,28 +199,33 @@ export default {
         this.$message.error(error.response.data.message);
       }
     },
+    // End:: Submit Form
 
-    
-    // end show data
     // start show data
-    async showCity() {
+    async showData() {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `cities/${this.$route.params?.id}`,
+          url: `cities/${this.$route.params?.id}?include=translations,region`,
         });
-        this.data.name_ar = res.data.data.City.name_ar;
-        this.data.name_en = res.data.data.City.name_en;
-        this.data.active = res.data.data.City.is_active;
+        this.data.name_ar = res.data.data.translations?.ar?.name;
+        this.data.name_en = res.data.data.translations?.en?.name;
+        this.data.created_at = res.data.data.created_at;
+        this.data.active = res.data.data.is_active;
+        this.data.region = res.data.data.region;
       } catch (error) {
         this.loading = false;
         console.log(error?.response?.data?.message);
       }
     },
+    // end show data
   },
 
   created() {
-    this.showCity();
+    // Start:: Fire Methods
+    this.showData();
+    // End:: Fire Methods
+    this.getRegions();
   },
 };
 </script>

@@ -1309,6 +1309,15 @@
   },
 
   "PLACEHOLDERS": {
+    "manage_districts": "إدارة الأحياء",
+    "add_new_district": "إضافة حي جديد",
+    "edit_district_data": "تعديل بيانات الحي",
+    "view_district_data": "عرض بيانات الحي",
+    "region": "المنطقة",
+    "manage_cities": "إدارة المدن",
+    "add_new_city": "إضافة مدينة جديدة",
+    "edit_city_data": "تعديل بيانات المدينة",
+    "view_city_data": "عرض بيانات المدينة",
     "codeOwnerName": "اسم صاحب الكود",
     "referralCode": "كود الإحالة",
     "joinedProviderName": "اسم مقدم الخدمة المنضم عبر الكود",

@@ -163,7 +163,7 @@ export default {
       try {
         await this.$axios({
           method: "POST",
-          url: `areas`,
+          url: `regions`,
           data: REQUEST_DATA,
         });
         this.isWaitingRequest = false;

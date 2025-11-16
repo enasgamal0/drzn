@@ -22,22 +22,46 @@
             <div class="row justify-content-center align-items-center w-100">
               <!-- Start:: Name Input -->
               <base-input
-                col="5"
+                col="4"
                 type="text"
                 :placeholder="$t('PLACEHOLDERS.name')"
                 v-model.trim="filterOptions.name"
               />
               <!-- End:: Name Input -->
 
+              <!-- Start:: Region Input -->
+              <base-select-input
+                col="4"
+                :optionsList="regions"
+                :placeholder="$t('PLACEHOLDERS.region')"
+                v-model="filterOptions.region"
+              />
+              <!-- End:: Region Input -->
+
               <!-- Start:: Status Input -->
               <base-select-input
-                col="5"
+                col="4"
                 :optionsList="activeStatuses"
                 :placeholder="$t('PLACEHOLDERS.status')"
                 v-model="filterOptions.is_active"
               />
               <!-- End:: Status Input -->
+              <!-- 
+              <base-picker-input
+                col="4"
+                type="date"
+                :placeholder="$t('PLACEHOLDERS.startDate')"
+                v-model.trim="filterOptions.from_date"
+              /> -->
+              <!-- End:: Start Date Input -->
 
+              <!-- Start:: End Date Input -->
+              <!-- <base-picker-input
+                col="4"
+                type="date"
+                :placeholder="$t('PLACEHOLDERS.endDate')"
+                v-model.trim="filterOptions.to_date" -->
+              <!-- /> -->
             </div>
 
             <div class="btns_wrapper">
@@ -61,7 +85,7 @@
       <!--  =========== Start:: Table Title =========== -->
       <div class="table_title_wrapper">
         <div class="title_text_wrapper">
-          <h5>{{ $t("PLACEHOLDERS.cities") }}</h5>
+          <h5>{{ $t("PLACEHOLDERS.manage_cities") }}</h5>
           <button
             v-if="!filterFormIsActive"
             class="filter_toggler"
@@ -71,12 +95,9 @@
           </button>
         </div>
 
-        <div
-          class="title_route_wrapper"
-          v-if="$can('cities create', 'cities')"
-        >
+        <div class="title_route_wrapper" v-if="$can('create-location', 'المواقع') || $can('create-location', 'Locations')">
           <router-link to="/cities/create">
-            {{ $t("TITLES.addCity") }}
+            {{ $t("PLACEHOLDERS.add_new_city") }}
           </router-link>
         </div>
       </div>
@@ -110,7 +131,7 @@
             }}
           </p>
         </template>
-         
+
         <!-- Start:: Activation -->
         <template v-slot:[`item.is_active`]="{ item }">
           <!-- v-if="permissions.activate" -->
@@ -118,7 +139,7 @@
             class="activation"
             dir="ltr"
             style="z-index: 1"
-            v-if="$can('cities activate', 'cities')"
+            v-if="$can('read-location:read-inactive', 'Locations') || $can('read-location:read-inactive', 'المواقع')"
           >
             <v-switch
               class="mt-2"
@@ -129,6 +150,7 @@
             ></v-switch>
           </div>
         </template>
+
         <!-- End:: Activation -->
 
         <!-- Start:: Actions -->
@@ -136,20 +158,7 @@
           <div class="actions">
             <a-tooltip
               placement="bottom"
-              v-if="$can('cities edit', 'cities')"
-            >
-              <template slot="title">
-                <span>{{ $t("BUTTONS.edit") }}</span>
-              </template>
-              
-              
-              <button class="btn_edit" @click="editItem(item)">
-                <i class="fal fa-edit"></i>
-              </button>
-            </a-tooltip>
-            <a-tooltip
-              placement="bottom"
-              v-if="$can('cities delete', 'cities')"
+              v-if="$can('delete-location', 'المواقع') || $can('delete-location', 'Locations')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.delete") }}</span>
@@ -158,15 +167,29 @@
                 <i class="fal fa-trash-alt"></i>
               </button>
             </a-tooltip>
-            
-            <!-- <a-tooltip placement="bottom" v-if="$can('cities show', 'cities')">
+            <a-tooltip
+              placement="bottom"
+              v-if="$can('update-location', 'المواقع') || $can('update-location', 'Locations')"
+            >
+              <template slot="title">
+                <span>{{ $t("BUTTONS.edit") }}</span>
+              </template>
+
+              <button class="btn_edit" @click="editItem(item)">
+                <i class="fal fa-edit"></i>
+              </button>
+            </a-tooltip>
+            <a-tooltip
+              placement="bottom"
+              v-if="$can('read-location', 'المواقع') || $can('read-location', 'Locations')"
+            >
               <template slot="title">
                 <span>{{ $t("BUTTONS.show") }}</span>
               </template>
               <button class="btn_show" @click="showItem(item)">
                 <i class="fal fa-eye"></i>
               </button>
-            </a-tooltip> -->
+            </a-tooltip>
 
             <template v-else>
               <i
@@ -289,7 +312,10 @@ export default {
       filterFormIsActive: false,
       filterOptions: {
         name: null,
+        region: null,
         is_active: null,
+        from_date: null,
+        to_date: null,
       },
       // End:: Filter Data
 
@@ -305,6 +331,12 @@ export default {
         {
           text: this.$t("PLACEHOLDERS.name"),
           value: "name",
+          sortable: false,
+          align: "center",
+        },
+        {
+          text: this.$t("PLACEHOLDERS.region"),
+          value: "region.name",
           sortable: false,
           align: "center",
         },
@@ -329,8 +361,7 @@ export default {
       ],
       tableRows: [],
       cities: [],
-      countries: [],
-      areas: [],
+      regions: [],
       // End:: Table Data
 
       // Start:: Dialogs Control Data
@@ -340,6 +371,9 @@ export default {
       selectedDescriptionTextToShow: "",
       dialogDelete: false,
       itemToDelete: null,
+      workingHoursItem: null,
+      dialogWorkingHours: false,
+      itemToShow: null,
       // End:: Dialogs Control Data
 
       // Start:: Pagination Data
@@ -349,9 +383,7 @@ export default {
         items_per_page: 6,
       },
       // End:: Pagination Data
-
-      regions: [],
-      cites: [],
+      cities: [],
     };
   },
 
@@ -365,6 +397,31 @@ export default {
   },
 
   methods: {
+    async getDays() {
+      try {
+        let res = await this.$axios({
+          method: "GET",
+          url: `days/allDay`,
+        });
+        this.days = res.data.data.days;
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
+    async getHours() {
+      try {
+        let res = await this.$axios({
+          method: "GET",
+          url: `city/allTimesAvilable`,
+        });
+        this.hours = res.data.times.map((time, index) => ({
+          id: index + 1,
+          name: time,
+        }));
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
     // Start:: Handel Filter
     async submitFilterForm() {
       if (this.$route.query.page !== "1") {
@@ -374,7 +431,10 @@ export default {
     },
     async resetFilter() {
       this.filterOptions.name = null;
+      this.filterOptions.region = null;
       this.filterOptions.is_active = null;
+      this.filterOptions.from_date = null;
+      this.filterOptions.to_date = null;
 
       if (this.$route.query.page !== "1") {
         await this.$router.push({ path: "/cities/all", query: { page: 1 } });
@@ -392,7 +452,7 @@ export default {
         },
       });
 
-      // Scroll To Screen's Top After Get cities
+      // Scroll To Screen's Top After Get Cities
       document.body.scrollTop = 0; // For Safari
       document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
     },
@@ -404,15 +464,19 @@ export default {
           url: "cities",
           params: {
             page: this.paginations.current_page,
-            name: this.filterOptions.name,
-            is_active: this.filterOptions.is_active?.value,
+            "search": this.filterOptions.name,
+            "filter[region_id]": this.filterOptions.region?.id,
+            "filter[is_active]": this.filterOptions.is_active?.value,
+            include: "translations,region,districts",
+            // "created_at[0]": this.filterOptions.from_date,
+            // "created_at[1]": this.filterOptions.to_date,
           },
         });
         this.loading = false;
-        this.tableRows = res.data.data.data;
+        this.tableRows = res.data.data;
         // console.log(res.data.data.items?.id.city.name);
-        this.paginations.last_page = res.data.data.meta.last_page;
-        this.paginations.items_per_page = res.data.data.meta.per_page;
+        this.paginations.last_page = res.data.pagination.last_page;
+        this.paginations.items_per_page = res.data.pagination.per_page;
       } catch (error) {
         this.loading = false;
         console.log(error.response.data.message);
@@ -437,9 +501,11 @@ export default {
       // REQUEST_DATA.append("_method", "PUT");
       try {
         await this.$axios({
-          method: "POST",
-          url: `cities/activate/${item.id}`,
-          data: REQUEST_DATA,
+          method: "PATCH",
+          url: `cities/${item.id}`,
+          data: {
+            is_active: item.is_active,
+          },
         });
         this.setTableRows();
         this.$message.success(this.$t("MESSAGES.changeActivation"));
@@ -464,7 +530,6 @@ export default {
       this.dialogDelete = true;
       this.itemToDelete = item;
     },
-
     async confirmDeleteItem() {
       try {
         await this.$axios({
@@ -476,13 +541,26 @@ export default {
         this.$message.success(this.$t("MESSAGES.deletedSuccessfully"));
       } catch (error) {
         this.dialogDelete = false;
-        this.$message.error(error.response.data?.errors?.message);
+        this.$message.error(error.response.data.message);
       }
     },
     // ===== End:: Delete
     // ==================== End:: Crud ====================
-  },
 
+    // Start:: Get Regions For Filter
+    async getRegions() {
+      try {
+        const res = await this.$axios({
+          method: "GET",
+          url: `regions?paginate=false&filter[is_active]=true`,
+        });
+        this.regions = res.data.data;
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
+    // End:: Get Regions For Filter
+  },
   created() {
     // Start:: Fire Methods
     window.addEventListener("click", () => {
@@ -491,8 +569,19 @@ export default {
     if (this.$route.query.page) {
       this.paginations.current_page = +this.$route.query.page;
     }
+    this.getRegions();
     this.setTableRows();
     // End:: Fire Methods
   },
 };
 </script>
+<style>
+.modal_btn {
+  font-size: 12px !important;
+  padding: 0 8px !important;
+  color: #E1423D !important;
+}
+.modal_btn_save {
+  border-color: #E1423D !important;
+}
+</style>

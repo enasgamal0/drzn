@@ -2,7 +2,7 @@
   <div class="crud_form_wrapper">
     <!-- Start:: Title -->
     <div class="form_title_wrapper">
-      <h4>{{ $t("TITLES.addCity") }}</h4>
+      <h4>{{ $t("PLACEHOLDERS.add_new_city") }}</h4>
     </div>
     <div class="col-12 text-end">
       <v-btn @click="$router.go(-1)" style="color: #E1423D">
@@ -31,6 +31,16 @@
             required
           />
           <!-- End:: Name Input -->
+
+          <!-- Start:: Region Select -->
+          <base-select-input
+            col="6"
+            :optionsList="regions"
+            :placeholder="$t('PLACEHOLDERS.region')"
+            v-model="data.region"
+            required
+          />
+          <!-- End:: Region Select -->
 
           <!-- Start:: Deactivate Switch Input -->
           <div class="input_wrapper switch_wrapper my-5 col-6">
@@ -67,7 +77,6 @@
 
 <script>
 import moment from "moment";
-
 export default {
   name: "CreateCity",
 
@@ -84,17 +93,31 @@ export default {
       data: {
         name_ar: null,
         name_en: null,
-        city_id: null,
+        region: null,
         active: true,
       },
       // End:: Data Collection To Send
       cities: [],
+      regions: [],
       arabicRegex: /^[\u0600-\u06FF\s]+$/,
       EnRegex: /[\u0600-\u06FF]/,
+
+      coordinates: [],
     };
   },
 
   methods: {
+    async getRegions() {
+      try {
+        let res = await this.$axios({
+          method: "GET",
+          url: `regions?paginate=false&filter[is_active]=true`,
+        });
+        this.regions = res.data.data;
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
     disabledDate(current) {
       return current && current < moment().startOf("day");
     },
@@ -126,22 +149,16 @@ export default {
     // Start:: validate Form Inputs
     validateFormInputs() {
       this.isWaitingRequest = true;
-      if (!this.data.name_ar || !this.data.name_en) {
-        if (!this.data.name_ar) {
-          this.isWaitingRequest = false;
-          this.$message.error(this.$t("VALIDATION.name_ar"));
-          return;
-        }
-        if (!this.data.name_en) {
-          this.isWaitingRequest = false;
-          this.$message.error(this.$t("VALIDATION.name_en"));
-          return;
-        }
-      } else {
-        this.submitForm();
-      }
+
+      this.submitForm();
     },
     // End:: validate Form Inputs
+
+    handleSaveCity(coordinates) {
+      // Handle the saved city coordinates from the child component
+
+      this.coordinates = coordinates;
+    },
 
     // Start:: Submit Form
     async submitForm() {
@@ -153,6 +170,19 @@ export default {
       if (this.data.name_en) {
         REQUEST_DATA.append("name[en]", this.data.name_en);
       }
+      if (this.data.region) {
+        REQUEST_DATA.append("region_id", this.data.region?.id);
+      }
+
+      // if (this.$refs.map_point.coordinates) {
+      //   this.$refs.map_point.coordinates.forEach((point, index) => {
+      //     if (point) {
+      //       REQUEST_DATA.append(`points[${index}][lat]`, point.lat);
+      //       REQUEST_DATA.append(`points[${index}][lng]`, point.lng);
+      //     }
+      //   });
+      // }
+
       REQUEST_DATA.append("is_active", this.data.active ? 1 : 0);
 
       // Start:: Append Request Data
@@ -171,6 +201,9 @@ export default {
       }
     },
     // End:: Submit Form
+  },
+  created() {
+    this.getRegions();
   },
 };
 </script>

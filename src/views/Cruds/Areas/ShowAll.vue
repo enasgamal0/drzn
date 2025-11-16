@@ -450,7 +450,7 @@ export default {
           url: "regions",
           params: {
             page: this.paginations.current_page,
-            "filter[name]": this.filterOptions.name,
+            "search": this.filterOptions.name,
             "filter[is_active]": this.filterOptions.is_active?.value,
             // "created_at[0]": this.filterOptions.from_date,
             // "created_at[1]": this.filterOptions.to_date,
@@ -459,8 +459,8 @@ export default {
         this.loading = false;
         this.tableRows = res.data.data;
         // console.log(res.data.data.items?.id.city.name);
-        this.paginations.last_page = res.data.meta.last_page;
-        this.paginations.items_per_page = res.data.meta.per_page;
+        this.paginations.last_page = res.data.pagination.last_page;
+        this.paginations.items_per_page = res.data.pagination.per_page;
       } catch (error) {
         this.loading = false;
         console.log(error.response.data.message);
@@ -518,7 +518,7 @@ export default {
       try {
         await this.$axios({
           method: "DELETE",
-          url: `areas/${this.itemToDelete.id}`,
+          url: `regions/${this.itemToDelete.id}`,
         });
         this.dialogDelete = false;
         this.setTableRows();

@@ -40,7 +40,10 @@
 
           <!-- Start:: Permissions -->
           <div class="col-12">
-            <div class="row" v-if="allSystemPermissions">
+            <div
+              class="row"
+              v-if="groupedPermissions && groupedPermissions.length"
+            >
               <div class="btn_wrapper">
                 <button
                   class="primary_btn"
@@ -51,35 +54,35 @@
                 </button>
               </div>
               <div
-                v-for="permission in allSystemPermissions"
-                :key="permission.name"
+                v-for="group in groupedPermissions"
+                :key="group.subject"
                 class="col-md-6"
               >
                 <div class="permission_card_wrapper">
-                  <p class="card_title">{{ permission.name }}</p>
+                  <p class="card_title">{{ group.subject }}</p>
                   <div class="card_body">
                     <div class="input_wrapper switch_wrapper my-5">
                       <v-switch
                         color="green"
                         :label="$t('PLACEHOLDERS.choose_all')"
-                        :value="permission.name"
-                        :input-value="isAllSelected(permission)"
-                        @change="toggleAllPermission(permission)"
+                        :model-value="isAllSelected(group)"
+                        @update:model-value="toggleAllPermission(group)"
+                        :input-value="isAllSelected(group)"
+                        @change="toggleAllPermission(group)"
                         hide-details
                       ></v-switch>
                     </div>
                     <div class="row">
                       <div
-                        v-for="(item, index) in permission.controls"
-                        :key="item.id"
+                        v-for="item in group.permissions"
+                        :key="item.name"
                         class="col-6"
-                        v-if="!(index === 0 && item.name === permission.name)"
                       >
                         <div class="input_wrapper switch_wrapper my-5">
                           <v-switch
                             color="green"
-                            :label="item.name"
-                            :value="item.id"
+                            :label="item.label"
+                            :value="item.name"
                             v-model="data.permissions"
                             hide-details
                           ></v-switch>
@@ -167,21 +170,40 @@ export default {
       allSystemPermissions: "PermissionsModule/allSystemPermissions",
     }),
     // End:: Vuex Getters
+    groupedPermissions() {
+      if (!this.allSystemPermissions) return [];
+      const subjectToPermissions = {};
+      this.allSystemPermissions.forEach((perm) => {
+        if (!perm || !perm.subject) return;
+        if (!subjectToPermissions[perm.subject]) {
+          subjectToPermissions[perm.subject] = [];
+        }
+        subjectToPermissions[perm.subject].push({
+          name: perm.name,
+          label: perm.label,
+        });
+      });
+      return Object.keys(subjectToPermissions).map((subject) => ({
+        subject,
+        permissions: subjectToPermissions[subject],
+      }));
+    },
   },
 
   methods: {
-    isAllSelected(permission) {
-      return Object.values(permission.controls).every((item) => {
-        return this.data.permissions.includes(item.id);
-      });
+    isAllSelected(group) {
+      if (!group || !group.permissions || group.permissions.length === 0)
+        return false;
+      return group.permissions.every((item) =>
+        this.data.permissions.includes(item.name)
+      );
     },
-    toggleAllPermission(permission) {
-      const allSelected = this.isAllSelected(permission);
-
-      permission.controls.forEach((item) => {
-        const index = this.data.permissions.indexOf(item.id);
+    toggleAllPermission(group) {
+      const allSelected = this.isAllSelected(group);
+      group.permissions.forEach((item) => {
+        const index = this.data.permissions.indexOf(item.name);
         if (!allSelected && index === -1) {
-          this.data.permissions.push(item.id);
+          this.data.permissions.push(item.name);
         } else if (allSelected && index !== -1) {
           this.data.permissions.splice(index, 1);
         }
@@ -195,25 +217,22 @@ export default {
     // Function to check all switches when the button is clicked
     checkAllSwitches() {
       // Check if any switch in the group is unchecked
-      const allChecked = this.allSystemPermissions.every((permission) => {
-        return Object.values(permission.controls).every((item) => {
-          return this.data.permissions.includes(item.id);
-        });
-      });
+      const allChecked =
+        this.groupedPermissions.length > 0 &&
+        this.groupedPermissions.every((group) =>
+          group.permissions.every((item) =>
+            this.data.permissions.includes(item.name)
+          )
+        );
 
       // If all are checked, uncheck them; otherwise, check them
-      this.allSystemPermissions.forEach((permission) => {
-        Object.values(permission.controls).forEach((item) => {
-          // Fix here: use Object.values()
-          const index = this.data.permissions.indexOf(item.id);
-          if (allChecked) {
-            if (index !== -1) {
-              this.data.permissions.splice(index, 1);
-            }
-          } else {
-            if (index === -1) {
-              this.data.permissions.push(item.id);
-            }
+      this.groupedPermissions.forEach((group) => {
+        group.permissions.forEach((item) => {
+          const index = this.data.permissions.indexOf(item.name);
+          if (allChecked && index !== -1) {
+            this.data.permissions.splice(index, 1);
+          } else if (!allChecked && index === -1) {
+            this.data.permissions.push(item.name);
           }
         });
       });
@@ -239,20 +258,20 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `roles/${this.id}`,
+          url: `roles/${this.id}?include=permissions,translations`,
         });
-        // console.log( "DATA TO EDIT =>", res.data.body );
-
-        // Start:: Set Data
-        this.data.name_ar = res.data.data.role.name_ar;
-        this.data.name_en = res.data.data.role.name_en;
-        // this.data.active = res.data.data.is_active;
-        res.data.data.role.permissions.forEach((element) => {
-          element.controls.forEach((item) => {
-            this.data.permissions.push(item.id);
-          });
-        });
-        // End:: Set Data
+        // Set names from translations
+        this.data.name_ar =
+          res.data?.data?.translations?.ar?.name ?? this.data.name_ar;
+        this.data.name_en =
+          res.data?.data?.translations?.en?.name ?? this.data.name_en;
+        // this.data.active = res.data?.data?.is_active;
+        // Preselect permissions by name
+        if (Array.isArray(res.data?.data?.permissions)) {
+          this.data.permissions = res.data.data.permissions.map(
+            (p) => p.name
+          );
+        }
       } catch (error) {
         console.log(error.response.data.message);
       }
@@ -289,7 +308,7 @@ export default {
       REQUEST_DATA.append("name[ar]", this.data.name_ar);
       REQUEST_DATA.append("name[en]", this.data.name_en);
       this.data.permissions.forEach((element) => {
-        REQUEST_DATA.append("role_permissions[]", element);
+        REQUEST_DATA.append("permissions[]", element); // send permission names
       });
       // REQUEST_DATA.append("is_active", +this.data.active);
 

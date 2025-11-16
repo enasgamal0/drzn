@@ -28,6 +28,7 @@
                 v-model.trim="filterOptions.name"
               />
               <!-- End:: Name Input -->
+
               <!-- Start:: Status Input -->
               <base-select-input
                 col="5"
@@ -36,6 +37,43 @@
                 v-model="filterOptions.is_active"
               />
               <!-- End:: Status Input -->
+
+              <!-- Start:: Region Input -->
+              <base-select-input
+                col="5"
+                :optionsList="regions"
+                :placeholder="$t('PLACEHOLDERS.region')"
+                v-model="filterOptions.region"
+              />
+              <!-- End:: Region Input -->
+
+              <!-- Start:: City Input -->
+              <base-select-input
+                col="5"
+                :optionsList="cities"
+                :placeholder="$t('PLACEHOLDERS.city')"
+                v-model="filterOptions.city"
+                :disabled="!filterOptions.region"
+              />
+              <!-- End:: City Input -->
+
+              
+              <!-- 
+              <base-picker-input
+                col="4"
+                type="date"
+                :placeholder="$t('PLACEHOLDERS.startDate')"
+                v-model.trim="filterOptions.from_date"
+              /> -->
+              <!-- End:: Start Date Input -->
+
+              <!-- Start:: End Date Input -->
+              <!-- <base-picker-input
+                col="4"
+                type="date"
+                :placeholder="$t('PLACEHOLDERS.endDate')"
+                v-model.trim="filterOptions.to_date" -->
+              <!-- /> -->
             </div>
 
             <div class="btns_wrapper">
@@ -59,7 +97,7 @@
       <!--  =========== Start:: Table Title =========== -->
       <div class="table_title_wrapper">
         <div class="title_text_wrapper">
-          <h5>{{ $t("PLACEHOLDERS.districts") }}</h5>
+          <h5>{{ $t("PLACEHOLDERS.manage_districts") }}</h5>
           <button
             v-if="!filterFormIsActive"
             class="filter_toggler"
@@ -69,12 +107,9 @@
           </button>
         </div>
 
-        <div
-          class="title_route_wrapper"
-          v-if="$can('districts create', 'districts')"
-        >
+        <div class="title_route_wrapper" v-if="$can('create-location', 'المواقع') || $can('create-location', 'Locations')">
           <router-link to="/districts/create">
-            {{ $t("TITLES.addDistrict") }}
+            {{ $t("PLACEHOLDERS.add_new_district") }}
           </router-link>
         </div>
       </div>
@@ -116,7 +151,7 @@
             class="activation"
             dir="ltr"
             style="z-index: 1"
-            v-if="$can('districts activate', 'districts')"
+            v-if="$can('read-location:read-inactive', 'Locations') || $can('read-location:read-inactive', 'المواقع')"
           >
             <v-switch
               class="mt-2"
@@ -127,6 +162,7 @@
             ></v-switch>
           </div>
         </template>
+
         <!-- End:: Activation -->
 
         <!-- Start:: Actions -->
@@ -134,18 +170,18 @@
           <div class="actions">
             <a-tooltip
               placement="bottom"
-              v-if="$can('districts show', 'districts')"
+              v-if="$can('delete-location', 'المواقع') || $can('delete-location', 'Locations')"
             >
               <template slot="title">
-                <span>{{ $t("BUTTONS.show") }}</span>
+                <span>{{ $t("BUTTONS.delete") }}</span>
               </template>
-              <button class="btn_show" @click="showItem(item)">
-                <i class="fal fa-eye"></i>
+              <button class="btn_delete" @click="selectDeleteItem(item)">
+                <i class="fal fa-trash-alt"></i>
               </button>
             </a-tooltip>
             <a-tooltip
               placement="bottom"
-              v-if="$can('districts edit', 'districts')"
+              v-if="$can('update-location', 'المواقع') || $can('update-location', 'Locations')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.edit") }}</span>
@@ -157,13 +193,13 @@
             </a-tooltip>
             <a-tooltip
               placement="bottom"
-              v-if="$can('districts delete', 'districts')"
+              v-if="$can('read-location', 'المواقع') || $can('read-location', 'Locations')"
             >
               <template slot="title">
-                <span>{{ $t("BUTTONS.delete") }}</span>
+                <span>{{ $t("BUTTONS.show") }}</span>
               </template>
-              <button class="btn_delete" @click="selectDeleteItem(item)">
-                <i class="fal fa-trash-alt"></i>
+              <button class="btn_show" @click="showItem(item)">
+                <i class="fal fa-eye"></i>
               </button>
             </a-tooltip>
 
@@ -288,7 +324,11 @@ export default {
       filterFormIsActive: false,
       filterOptions: {
         name: null,
+        region: null,
+        city: null,
         is_active: null,
+        from_date: null,
+        to_date: null,
       },
       // End:: Filter Data
 
@@ -304,6 +344,18 @@ export default {
         {
           text: this.$t("PLACEHOLDERS.name"),
           value: "name",
+          sortable: false,
+          align: "center",
+        },
+        {
+          text: this.$t("PLACEHOLDERS.region"),
+          value: "city.region.name",
+          sortable: false,
+          align: "center",
+        },
+        {
+          text: this.$t("PLACEHOLDERS.city"),
+          value: "city.name",
           sortable: false,
           align: "center",
         },
@@ -327,6 +379,9 @@ export default {
         },
       ],
       tableRows: [],
+      districts: [],
+      regions: [],
+      cities: [],
       // End:: Table Data
 
       // Start:: Dialogs Control Data
@@ -336,6 +391,9 @@ export default {
       selectedDescriptionTextToShow: "",
       dialogDelete: false,
       itemToDelete: null,
+      workingHoursItem: null,
+      dialogWorkingHours: false,
+      itemToShow: null,
       // End:: Dialogs Control Data
 
       // Start:: Pagination Data
@@ -345,8 +403,7 @@ export default {
         items_per_page: 6,
       },
       // End:: Pagination Data
-
-      regions: [],
+      districts: [],
     };
   },
 
@@ -357,9 +414,43 @@ export default {
       this.setTableRows();
     },
     // End:: Page Query Param Watcher To Get Page Data Based On It's Change
+    // Start:: Watch Region To Load Cities And Reset City
+    "filterOptions.region"(newRegion) {
+      this.filterOptions.city = null;
+      this.cities = [];
+      if (newRegion && newRegion.id) {
+        this.getCitiesByRegion(newRegion.id);
+      }
+    },
+    // End:: Watch Region To Load Cities And Reset City
   },
 
   methods: {
+    async getDays() {
+      try {
+        let res = await this.$axios({
+          method: "GET",
+          url: `days/allDay`,
+        });
+        this.days = res.data.data.days;
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
+    async getHours() {
+      try {
+        let res = await this.$axios({
+          method: "GET",
+          url: `district/allTimesAvilable`,
+        });
+        this.hours = res.data.times.map((time, index) => ({
+          id: index + 1,
+          name: time,
+        }));
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    },
     // Start:: Handel Filter
     async submitFilterForm() {
       if (this.$route.query.page !== "1") {
@@ -369,7 +460,11 @@ export default {
     },
     async resetFilter() {
       this.filterOptions.name = null;
+      this.filterOptions.region = null;
+      this.filterOptions.city = null;
       this.filterOptions.is_active = null;
+      this.filterOptions.from_date = null;
+      this.filterOptions.to_date = null;
 
       if (this.$route.query.page !== "1") {
         await this.$router.push({ path: "/districts/all", query: { page: 1 } });
@@ -387,28 +482,32 @@ export default {
         },
       });
 
-      // Scroll To Screen's Top After Get districts
+      // Scroll To Screen's Top After Get Districts
       document.body.scrollTop = 0; // For Safari
       document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
     },
     async setTableRows() {
       this.loading = true;
       try {
-        console.log("this.filterOptions.name", this.filterOptions);
         let res = await this.$axios({
           method: "GET",
-          url: "regions",
+          url: "districts",
           params: {
             page: this.paginations.current_page,
-            name: this.filterOptions.name,
-            is_active: this.filterOptions.is_active?.value,
+            "search": this.filterOptions.name,
+            "filter[region_id]": this.filterOptions.region?.id,
+            "filter[city_id]": this.filterOptions.city?.id,
+            "filter[is_active]": this.filterOptions.is_active?.value,
+            include: "translations,city,city.region",
+            // "created_at[0]": this.filterOptions.from_date,
+            // "created_at[1]": this.filterOptions.to_date,
           },
         });
         this.loading = false;
         this.tableRows = res.data.data;
         // console.log(res.data.data.items?.id.district.name);
-        this.paginations.last_page = res.data.meta.last_page;
-        this.paginations.items_per_page = res.data.meta.per_page;
+        this.paginations.last_page = res.data.pagination.last_page;
+        this.paginations.items_per_page = res.data.pagination.per_page;
       } catch (error) {
         this.loading = false;
         console.log(error.response.data.message);
@@ -433,9 +532,11 @@ export default {
       // REQUEST_DATA.append("_method", "PUT");
       try {
         await this.$axios({
-          method: "POST",
-          url: `districts/activate/${item.id}`,
-          data: REQUEST_DATA,
+          method: "PATCH",
+          url: `districts/${item.id}`,
+          data: {
+            is_active: item.is_active,
+          },
         });
         this.setTableRows();
         this.$message.success(this.$t("MESSAGES.changeActivation"));
@@ -460,7 +561,6 @@ export default {
       this.dialogDelete = true;
       this.itemToDelete = item;
     },
-
     async confirmDeleteItem() {
       try {
         await this.$axios({
@@ -472,13 +572,45 @@ export default {
         this.$message.success(this.$t("MESSAGES.deletedSuccessfully"));
       } catch (error) {
         this.dialogDelete = false;
-        this.$message.error(error.response.data?.errors?.message);
+        this.$message.error(error.response.data.message);
       }
     },
     // ===== End:: Delete
     // ==================== End:: Crud ====================
-  },
 
+    // Start:: Get Regions For Filter
+    async getRegions() {
+      try {
+        const res = await this.$axios({
+          method: "GET",
+          url: `regions?paginate=false&filter[is_active]=true`,
+        });
+        this.regions = res.data.data;
+      } catch (error) {
+        console.log(error.response?.data?.message || error.message);
+      }
+    },
+    // End:: Get Regions For Filter
+
+    // Start:: Get Cities By Region For Filter
+    async getCitiesByRegion(regionId) {
+      try {
+        const res = await this.$axios({
+          method: "GET",
+          url: `cities`,
+          params: {
+            paginate: false,
+            "filter[is_active]": true,
+            "filter[region_id]": regionId,
+          },
+        });
+        this.cities = res.data.data;
+      } catch (error) {
+        console.log(error.response?.data?.message || error.message);
+      }
+    },
+    // End:: Get Cities By Region For Filter
+  },
   created() {
     // Start:: Fire Methods
     window.addEventListener("click", () => {
@@ -487,8 +619,19 @@ export default {
     if (this.$route.query.page) {
       this.paginations.current_page = +this.$route.query.page;
     }
+    this.getRegions();
     this.setTableRows();
     // End:: Fire Methods
   },
 };
 </script>
+<style>
+.modal_btn {
+  font-size: 12px !important;
+  padding: 0 8px !important;
+  color: #E1423D !important;
+}
+.modal_btn_save {
+  border-color: #E1423D !important;
+}
+</style>

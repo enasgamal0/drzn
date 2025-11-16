@@ -161,7 +161,7 @@ export default {
       // Start:: Append Request Data
       try {
         await this.$axios({
-          method: "POST",
+          method: "PATCH",
           url: `regions/${this.$route.params.id}`,
           data: REQUEST_DATA,
         });
@@ -180,10 +180,10 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `areas/${this.$route.params?.id}`,
+          url: `regions/${this.$route.params?.id}?include=translations`,
         });
-        this.data.name_ar = res.data.data.Area.name_ar;
-        this.data.name_en = res.data.data.Area.name_en;
+        this.data.name_ar = res.data.data.translations?.ar?.name;
+        this.data.name_en = res.data.data.translations?.en?.name;
         this.data.created_at = res.data.data.Area.created_at;
         this.data.active = res.data.data.Area.is_active;
       } catch (error) {

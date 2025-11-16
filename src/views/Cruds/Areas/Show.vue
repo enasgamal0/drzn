@@ -147,10 +147,10 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `regions/${this.$route.params?.id}`,
+          url: `regions/${this.$route.params?.id}?include=translations`,
         });
-        this.data.name_ar = res.data.data.name_ar;
-        this.data.name_en = res.data.data.name_en;
+        this.data.name_ar = res.data.data.translations?.ar?.name;
+        this.data.name_en = res.data.data.translations?.en?.name;
         this.data.created_at = res.data.data.created_at;
         this.data.active = res.data.data.is_active;
         // this.data.count_order_finish = res.data.data.count_order_finish;

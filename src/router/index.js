@@ -205,6 +205,7 @@ import CitiesHome from "../views/Cruds/Cities/Home.vue";
 import AllCities from "../views/Cruds/Cities/ShowAll.vue";
 import CreateCities from "../views/Cruds/Cities/Create.vue";
 import EditCities from "../views/Cruds/Cities/Edit.vue";
+import ShowCities from "../views/Cruds/Cities/Show.vue";
 // ============== End:: Cities Routes
 
 // ============== Start:: Areas Routes
@@ -1446,6 +1447,19 @@ const routes = [
               middleware: [auth],
               requiresPermission: {
                 action: "cities edit",
+                subject: "cities",
+              },
+            },
+          },
+          {
+            path: "show/:id",
+            name: "Showcities",
+            component: ShowCities,
+            props: true,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "cities show",
                 subject: "cities",
               },
             },

@@ -1309,6 +1309,15 @@
   },
 
   "PLACEHOLDERS": {
+    "manage_districts": "Districts Management",
+    "add_new_district": "Add a New District",
+    "edit_district_data": "Edit District Data",
+    "view_district_data": "Show District Data",
+    "region": "Region",
+    "manage_cities": "Cities Management",
+    "add_new_city": "Add a New City",
+    "edit_city_data": "Edit City Data",
+    "view_city_data": "Show City Data",
     "codeOwnerName": "Code provider name",
     "referralCode": "Referral code",
     "joinedProviderName": "Joined provider name",

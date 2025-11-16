@@ -53,10 +53,8 @@
       <!-- Start::  Roles and Admins Routes-->
       <div class="side_routes_wrapper"
       v-if="
-            $can('roles index', 'roles') ||
-            $can('permissions-index', 'permissions') ||
-            $can('admins-index', 'admins') ||
-            $can('admins index', 'admins')
+            $can('read-role', 'الأدوار والصلاحيات') || $can('read-role', 'Roles & Permissions') ||
+            $can('read-admin', 'المدراء') || $can('read-admin', 'Admin')
           ">
         <a-menu
           style="width: 100%"
@@ -1340,21 +1338,20 @@ export default {
           key: "dashboard",
           title: this.$t("SIDENAV.control_admins"),
           icon: require("@/assets/media/icons/ui_icons/roles.svg"),
-          hasPermission: this.$can("roles index", "roles"),
+          hasPermission: this.$can('read-role', 'الأدوار والصلاحيات') || $can('read-role', 'Roles & Permissions'),
           children: [
             {
               key: "roles",
               title: this.$t("SIDENAV.Roles.title"),
               route: "/roles/all",
               hasPermission:
-                this.$can("roles index", "roles") ||
-                this.$can("permissions index", "permissions"),
+                this.$can('read-role', 'الأدوار والصلاحيات') || $can('read-role', 'Roles & Permissions')
             },
             {
               key: "admins",
               title: this.$t("SIDENAV.Admins.title"),
               route: "/admins/all",
-              hasPermission: this.$can("admins index", "admins"),
+              hasPermission: this.$can('read-admin', 'المدراء') || $can('read-admin', 'Admins'),
             },
           ],
         },

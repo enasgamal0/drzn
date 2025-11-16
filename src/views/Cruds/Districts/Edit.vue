@@ -107,9 +107,9 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `cities?page=0&limit=0&is_active=1&ignorePermissionCheck=1`,
+          url: `cities?paginate=false&filter[is_active]=true`,
         });
-        this.cities = res.data.data.data;
+        this.cities = res.data.data;
       } catch (error) {
         console.log(error.response.data.message);
       }
@@ -155,11 +155,9 @@ export default {
       if (this.data.city) {
         REQUEST_DATA.append("city_id", this.data.city?.id);
       }
-      REQUEST_DATA.append("is_active", this.data.active ? 1 : 0);
-      REQUEST_DATA.append("_method", "PUT");
       try {
         await this.$axios({
-          method: "POST",
+          method: "PATCH",
           url: `districts/${this.$route.params?.id}`,
           data: REQUEST_DATA,
         });
@@ -177,12 +175,12 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `districts/${this.$route.params?.id}`,
+          url: `districts/${this.$route.params?.id}?include=translations,city`,
         });
-        this.data.name_ar = res.data.data.District.name_ar;
-        this.data.name_en = res.data.data.District.name_en;
-        this.data.city = res.data.data.District.city;
-        this.data.active = res.data.data.District.is_active;
+        this.data.name_ar = res.data.data.translations?.ar?.name;
+        this.data.name_en = res.data.data.translations?.en?.name;
+        this.data.city = res.data.data.city;
+        this.data.active = res.data.data.is_active;
       } catch (error) {
         this.loading = false;
         console.log(error?.response?.data?.message);
