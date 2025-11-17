@@ -21,33 +21,31 @@
             <div class="row justify-content-center align-items-center w-100">
               <!-- Start:: Name Input -->
               <base-input
-                col="6"
+                col="4"
                 type="text"
                 :placeholder="$t('PLACEHOLDERS.name')"
                 v-model.trim="filterOptions.name"
+                :maxlength="100"
               />
               <!-- End:: Name Input -->
 
               <!-- Start:: Status Input -->
               <base-select-input
-                col="6"
+                col="4"
                 :optionsList="activeStatuses"
                 :placeholder="$t('PLACEHOLDERS.status')"
                 v-model="filterOptions.is_active"
               />
               <!-- End:: Status Input -->
-              <base-picker-input
-              col="6"
-              type="date"
-              :placeholder="$t('PLACEHOLDERS.creation_time_period_from')"
-              v-model.trim="filterOptions.from_date"
-            />
-            <base-picker-input
-              col="6"
-              type="date"
-              :placeholder="$t('PLACEHOLDERS.creation_time_period_to')"
-              v-model.trim="filterOptions.to_date"
-            />
+
+              <!-- Start:: Category Input -->
+              <base-select-input
+                col="4"
+                :optionsList="categoriesList"
+                :placeholder="$t('PLACEHOLDERS.category')"
+                v-model="filterOptions.category_id"
+              />
+              <!-- End:: Category Input -->
             </div>
 
             <div class="btns_wrapper">
@@ -83,7 +81,10 @@
 
         <div
           class="title_route_wrapper"
-          v-if="$can('products create', 'products')"
+          v-if="
+            $can('create-product', 'Products') ||
+            $can('create-product', 'المنتجات')
+          "
         >
           <router-link to="/products/create">
             {{ $t("TITLES.addProduct") }}
@@ -133,32 +134,36 @@
           <p v-else>{{ item.name }}</p>
         </template>
         <!-- End:: Title -->
-        <!-- Start:: Item Image -->
-        <template v-slot:[`item.image`]="{ item }">
-          <div class="table_image_wrapper">
-            <h6 class="text-danger" v-if="!item.image">
-              {{ $t("TABLES.noData") }}
-            </h6>
 
-            <button class="my-1" @click="showImageModal(item)" v-else>
-              <video
-                v-if="item.image.endsWith('mp4')"
-                :src="item.image"
-                width="150"
-                height="100"
-                controls
-              ></video>
-              <img
-                v-else
-                class="rounded"
-                :src="item.image"
-                width="60"
-                height="60"
-              />
-            </button>
+        <!-- Start:: Category -->
+        <template v-slot:[`item.category`]="{ item }">
+          <p class="text-danger" v-if="!item.category || !item.category.name">
+            {{ $t("TABLES.noData") }}
+          </p>
+          <p v-else>{{ item.category.name }}</p>
+        </template>
+        <!-- End:: Category -->
+
+        <!-- Start:: Created At -->
+        <template v-slot:[`item.created_at`]="{ item }">
+          <p class="text-danger" v-if="!item.created_at">
+            {{ $t("TABLES.noData") }}
+          </p>
+          <p v-else>{{ item.created_at }}</p>
+        </template>
+        <!-- End:: Created At -->
+
+        <!-- Start:: Average Rating -->
+        <template v-slot:[`item.average_rating`]="{ item }">
+          <div class="d-flex justify-center align-center">
+            <rating-preview
+              :rate="item.average_rating || 0"
+              :size="16"
+              :length="5"
+            />
           </div>
         </template>
-        <!-- End:: Item Image -->
+        <!-- End:: Average Rating -->
 
         <!-- Start:: Activation -->
         <template v-slot:[`item.is_active`]="{ item }">
@@ -166,7 +171,10 @@
             class="activation"
             dir="ltr"
             style="z-index: 1"
-            v-if="$can('products activate', 'products')"
+            v-if="
+              $can('read-product:read-inactive', 'Products') ||
+              $can('read-product:read-inactive', 'المنتجات')
+            "
           >
             <v-switch
               class="mt-2"
@@ -193,7 +201,10 @@
           <div class="actions">
             <a-tooltip
               placement="bottom"
-              v-if="$can('products show', 'products')"
+              v-if="
+                $can('read-product', 'Products') ||
+                $can('read-product', 'المنتجات')
+              "
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.show") }}</span>
@@ -205,7 +216,10 @@
 
             <a-tooltip
               placement="bottom"
-              v-if="$can('products edit', 'products')"
+              v-if="
+                $can('update-product', 'Products') ||
+                $can('update-product', 'المنتجات')
+              "
               :class="{ disable_parent: item.can_edit === true }"
             >
               <template slot="title">
@@ -222,7 +236,10 @@
 
             <a-tooltip
               placement="bottom"
-              v-if="$can('products delete', 'products')"
+              v-if="
+                $can('delete-product', 'Products') ||
+                $can('delete-product', 'المنتجات')
+              "
               :class="{ disable_parent: item.can_delete === true }"
             >
               <template slot="title">
@@ -322,9 +339,14 @@
 
 <script>
 import { mapGetters } from "vuex";
+import RatingPreview from "@/components/ui/RatingPreview.vue";
 
 export default {
   name: "AllProducts",
+
+  components: {
+    RatingPreview,
+  },
 
   computed: {
     ...mapGetters({
@@ -333,11 +355,6 @@ export default {
 
     activeStatuses() {
       return [
-        {
-          id: null,
-          name: this.$t("STATUS.all"),
-          value: null,
-        },
         {
           id: 1,
           name: this.$t("STATUS.active"),
@@ -364,9 +381,9 @@ export default {
       filterOptions: {
         name: null,
         is_active: null,
+        category_id: null,
       },
-      from_date: null,
-      to_date: null,
+      categoriesList: [],
       // End:: Filter Data
 
       // Start:: Table Data
@@ -386,14 +403,14 @@ export default {
           align: "center",
         },
         {
-          text: this.$t("PLACEHOLDERS.image"),
-          value: "image",
+          text: this.$t("PLACEHOLDERS.category"),
+          value: "category",
           sortable: false,
           align: "center",
         },
         {
-          text: this.$t("PLACEHOLDERS.package_count_order"),
-          value: "count_order",
+          text: this.$t("SIDENAV.cancelation.created_at"),
+          value: "created_at",
           sortable: false,
           align: "center",
         },
@@ -405,10 +422,11 @@ export default {
           width: "120",
         },
         {
-          text: this.$t("SIDENAV.cancelation.created_at"),
-          value: "created_at",
+          text: this.$t("PLACEHOLDERS.average_rating"),
+          value: "average_rating",
           sortable: false,
           align: "center",
+          width: "150",
         },
         {
           text: this.$t("TABLES.Clients.actions"),
@@ -460,8 +478,7 @@ export default {
     async resetFilter() {
       this.filterOptions.name = null;
       this.filterOptions.is_active = null;
-      this.filterOptions.from_date = null;
-      this.filterOptions.to_date = null;
+      this.filterOptions.category_id = null;
       if (this.$route.query.page !== "1") {
         await this.$router.push({ path: "/products/all", query: { page: 1 } });
       }
@@ -489,17 +506,19 @@ export default {
           method: "GET",
           url: "products",
           params: {
+            include: "category,translations",
             page: this.paginations.current_page,
-            name: this.filterOptions.name,
-            'created_at[0]': this.filterOptions.from_date,
-            'created_at[1]': this.filterOptions.to_date,
-            is_active: this.filterOptions.is_active?.value,
+            search: this.filterOptions.name,
+            "filter[is_active]": this.filterOptions.is_active?.value,
+            "filter[category_id]": this.filterOptions.category_id?.id,
           },
         });
         this.loading = false;
         this.tableRows = res.data.data;
-        this.paginations.last_page = res.data.meta.last_page;
-        this.paginations.items_per_page = res.data.meta.per_page;
+        this.paginations.last_page =
+          res.data.pagination?.last_page || res.data.meta?.last_page || 1;
+        this.paginations.items_per_page =
+          res.data.pagination?.per_page || res.data.meta?.per_page || 6;
       } catch (error) {
         this.loading = false;
         console.log(error.response.data.message);
@@ -516,12 +535,27 @@ export default {
     // Start:: Change Activation Status
     async changeActivationStatus(item) {
       try {
+        const formData = new FormData();
+        formData.append("is_active", item.is_active ? 1 : 0);
+        formData.append(
+          "description[ar]",
+          item.translations?.ar?.description || ""
+        );
+        formData.append(
+          "description[en]",
+          item.translations?.en?.description || ""
+        );
+
         await this.$axios({
           method: "POST",
-          url: `products/activate/${item.id}`,
+          url: `products/${item.id}?_method=PATCH`,
+          data: formData,
+          headers: { "Content-Type": "multipart/form-data" },
         });
+
         this.$message.success(this.$t("MESSAGES.changeActivation"));
       } catch (error) {
+        item.is_active = !item.is_active;
         this.$message.error(error.response.data.message);
       }
     },
@@ -570,6 +604,36 @@ export default {
     // ===== End:: Delete
 
     // ==================== End:: Crud ====================
+
+    // Start:: Get Categories
+    async getCategories() {
+      try {
+        let res = await this.$axios({
+          method: "GET",
+          url: "product-categories?paginate=false&filter[is_active]=true",
+          params: {
+            limit: 0,
+            page: 0,
+            isActive: 1,
+          },
+        });
+        this.categoriesList = [
+          {
+            id: null,
+            name: this.$t("STATUS.all"),
+            value: null,
+          },
+          ...(res.data.data?.data || res.data.data || []).map((category) => ({
+            id: category.id,
+            name: category.name,
+            value: category.id,
+          })),
+        ];
+      } catch (error) {
+        console.log(error.response?.data?.message);
+      }
+    },
+    // End:: Get Categories
   },
 
   created() {
@@ -580,6 +644,7 @@ export default {
     if (this.$route.query.page) {
       this.paginations.current_page = +this.$route.query.page;
     }
+    this.getCategories();
     this.setTableRows();
 
     // End:: Fire Methods

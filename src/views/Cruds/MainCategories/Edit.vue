@@ -130,13 +130,13 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `categories/${this.$route.params.id}`,
+          url: `product-categories/${this.$route.params.id}?include=translations`,
         });
         // Start:: Set Data
-        this.data.image.path = res.data.data.Category.image;
-        this.data.nameAr = res.data.data.Category.name_ar;
-        this.data.nameEn = res.data.data.Category.name_en;
-        this.data.active = res.data.data.Category.is_active;
+        this.data.image.path = res.data.data.image_url;
+        this.data.nameAr = res.data.data?.translations?.ar?.name;
+        this.data.nameEn = res.data.data?.translations?.en?.name;
+        this.data.active = res.data.data?.is_active;
         // End:: Set Data
       } catch (error) {
         console.log(error.response.data.message);
@@ -178,8 +178,8 @@ export default {
 
       try {
         await this.$axios({
-          method: "POST",
-          url: `categories/${this.$route.params.id}`,
+          method: "PATCH",
+          url: `product-categories/${this.$route.params.id}`,
           data: REQUEST_DATA,
         });
         this.isWaitingRequest = false;

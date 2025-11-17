@@ -282,7 +282,7 @@
               <v-card-actions>
                 <v-btn
                   class="modal_confirm_btn"
-                  @click="HandlingItemActivationStatus"
+                  @click="HandlingItemActivationStatus(itemToChangeActivationStatus)"
                 >
                   {{ $t("BUTTONS.ok") }}
                 </v-btn>
@@ -507,7 +507,7 @@ export default {
           url: "roles?include=permissions",
           params: {
             page: this.paginations.current_page,
-            "search": this.filterOptions.name,
+            "filter[name]": this.filterOptions.name,
             "filter[is_active]": this.filterOptions.status?.value,
           },
         });
@@ -546,6 +546,8 @@ export default {
       }));
     },
     async HandlingItemActivationStatus(selectedItem) {
+      console.log("selectedItem", selectedItem);
+      const action = selectedItem.is_active == 1 ? "deactivate" : "activate";
       this.dialogDeactivate = false;
       let targetItem = this.itemToChangeActivationStatus
         ? this.itemToChangeActivationStatus
@@ -558,8 +560,8 @@ export default {
 
       try {
         await this.$axios({
-          method: "PUT",
-          url: `roles/toggle/${targetItem.id}`,
+          method: "PATCH",
+          url: `roles/${targetItem.id}/${action}`,
           data: REQUEST_DATA,
         });
         this.$message.success(this.$t("MESSAGES.changeActivation"));

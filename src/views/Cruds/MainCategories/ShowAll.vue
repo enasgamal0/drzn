@@ -76,7 +76,7 @@
         </div>
         <div
           class="title_route_wrapper"
-          v-if="$can('categories create', 'categories')"
+          v-if="$can('create-product-category', 'Product Categories') || $can('create-product-category', 'فئات المنتجات')"
         >
           <router-link to="/main-categories/create">
             {{ $t("PLACEHOLDERS.add_main_section") }}
@@ -119,7 +119,7 @@
             class="activation"
             dir="ltr"
             style="z-index: 1"
-            v-if="$can('categories activate', 'categories')"
+            v-if="$can('read-product-category:read-inactive', 'Product Categories') || $can('read-product-category:read-inactive', 'فئات المنتجات')"
           >
             <v-switch
               class="mt-2"
@@ -146,7 +146,7 @@
           <div class="actions">
             <a-tooltip
               placement="bottom"
-              v-if="$can('categories show', 'categories')"
+              v-if="$can('read-product-category', 'Product Categories') || $can('read-product-category', 'فئات المنتجات')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.show") }}</span>
@@ -158,7 +158,7 @@
 
             <a-tooltip
               placement="bottom"
-              v-if="$can('categories edit', 'categories')"
+              v-if="$can('update-product-category', 'Product Categories') || $can('update-product-category', 'فئات المنتجات')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.edit") }}</span>
@@ -170,7 +170,7 @@
 
             <a-tooltip
               placement="bottom"
-              v-if="$can('categories delete', 'categories')"
+              v-if="$can('delete-product-category', 'Product Categories') || $can('delete-product-category', 'فئات المنتجات')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.delete") }}</span>
@@ -398,18 +398,18 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: "categories",
+          url: "product-categories",
           params: {
             page: this.paginations.current_page,
-            name: this.filterOptions.name,
-            is_active: this.filterOptions.status?.value,
+            search: this.filterOptions.name,
+            'filter[is_active]': this.filterOptions.status?.value,
           },
         });
         this.loading = false;
         // console.log("All Data ==>", res.data.data);
-        this.tableRows = res.data.data.data;
-        this.paginations.last_page = res.data.data.meta.last_page;
-        this.paginations.items_per_page = res.data.data.meta.per_page;
+        this.tableRows = res.data.data;
+        this.paginations.last_page = res.data.pagination.last_page;
+        this.paginations.items_per_page = res.data.pagination.per_page;
       } catch (error) {
         this.loading = false;
         console.log(error.response.data.message);
@@ -436,7 +436,7 @@ export default {
       try {
         await this.$axios({
           method: "DELETE",
-          url: `categories/${this.itemToDelete.id}`,
+          url: `product-categories/${this.itemToDelete.id}`,
         });
         this.dialogDelete = false;
         this.setTableRows();
@@ -455,8 +455,11 @@ export default {
       // REQUEST_DATA.append("is_active", +item.status == 1 ? 0 : 1);
       try {
         let response = await this.$axios({
-          method: "POST",
-          url: `categories/activate/${item.id}`,
+          method: "PATCH",
+          url: `product-categories/${item.id}`,
+          data: {
+            is_active: item.is_active ? 1 : 0,
+          },
         });
         this.setTableRows();
         this.$message.success(response.data.message);

@@ -14,7 +14,7 @@
       </label>
       <input :id="$attrs.id" class="form-control" :type="type" :value="value" @click="$emit('fireClick')"
       :dir="getAppLocale == 'ar' && type == 'tel' ? 'rtl' : ''"
-
+        :maxlength="maxlength"
         @input="updateValue($event)" :readonly="readonly" :disabled="disabled" />
     </div>
     <!-- ========== End:: Text || Number || Tel || Email Input ========== -->
@@ -42,7 +42,7 @@
         <span class="text-danger" v-if="required">*</span>
       </label>
       <textarea class="form-control" :rows="rows" :value="value" @input="updateValue($event)" :readonly="readonly"
-        :disabled="disabled">
+        :disabled="disabled" :maxlength="maxlength">
       </textarea>
     </div>
     <!-- ========== End:: Textarea Input ========== -->
@@ -90,6 +90,10 @@ export default {
       required: false,
       type: Boolean,
       default: false,
+    },
+    maxlength: {
+      required: false,
+      type: [String, Number],
     },
     // ====== End:: General Inputs Props ====== //
 

@@ -158,7 +158,7 @@ export default {
       try {
         await this.$axios({
           method: "POST",
-          url: `categories`,
+          url: `product-categories`,
           data: REQUEST_DATA,
         });
         this.isWaitingRequest = false;

@@ -51,17 +51,20 @@
       <!-- End:: Home Route -->
 
       <!-- Start::  Roles and Admins Routes-->
-      <div class="side_routes_wrapper"
-      v-if="
-            $can('read-role', 'الأدوار والصلاحيات') || $can('read-role', 'Roles & Permissions') ||
-            $can('read-admin', 'المدراء') || $can('read-admin', 'Admin')
-          ">
+      <div
+        class="side_routes_wrapper"
+        v-if="
+          $can('read-role', 'الأدوار والصلاحيات') ||
+          $can('read-role', 'Roles & Permissions') ||
+          $can('read-admin', 'المدراء') ||
+          $can('read-admin', 'Admin')
+        "
+      >
         <a-menu
           style="width: 100%"
           mode="vertical"
           :open-keys="openKeys"
           @openChange="onOpenChange"
-          
         >
           <a-sub-menu
             v-for="item in sideNavbarList_Admins"
@@ -290,7 +293,10 @@
       <div
         class="home_route"
         @click="$emit('fireToggleNavDrawerEmit')"
-        v-if="$can('categories index', 'categories')"
+        v-if="
+          $can('read-product-category', 'Product Categories') ||
+          $can('read-product-category', 'فئات المنتجات')
+        "
       >
         <router-link to="/main-categories/all">
           <span class="route_icon">
@@ -307,6 +313,31 @@
         </router-link>
       </div>
       <!-- End:: main_sections Route -->
+
+      <!-- Start:: products Route -->
+      <div
+        class="home_route"
+        @click="$emit('fireToggleNavDrawerEmit')"
+        v-if="
+          $can('read-product', 'Products') ||
+          $can('read-product', 'المنتجات')
+        "
+      >
+        <router-link to="/products/all">
+          <span class="route_icon">
+            <img
+              src="@/assets/media/icons/ui_icons/box.svg"
+              alt="icon"
+              width="40"
+              height="40"
+            />
+          </span>
+          <span class="route_text">
+            {{ $t("PLACEHOLDERS.products") }}
+          </span>
+        </router-link>
+      </div>
+      <!-- End:: products Route -->
 
       <!-- Start:: sub_sections Route -->
       <div
@@ -479,8 +510,6 @@
       </div> -->
       <!-- End:: reasons Route -->
 
-      
-
       <!-- Start:: RequestWallets Route -->
       <!-- <div
         class="home_route"
@@ -533,7 +562,7 @@
       >
         <router-link to="/recommendations/all">
           <span
-          class="route_icon d-flex justify-center"
+            class="route_icon d-flex justify-center"
             style="
               background-color: rgba(116, 193, 252, 0.3);
               border-radius: 6px;
@@ -579,7 +608,7 @@
       <!-- End:: services Route -->
 
       <!-- Start:: places Route -->
-          <!-- $can('countries index', 'countries') || $can('areas index', 'areas') || $can('cities index', 'cities') || $can('districts index', 'districts') -->
+      <!-- $can('countries index', 'countries') || $can('areas index', 'areas') || $can('cities index', 'cities') || $can('districts index', 'districts') -->
       <div class="side_routes_wrapper" v-if="true">
         <a-menu
           style="width: 100%"
@@ -1031,12 +1060,10 @@
       <!-- Start:: rates Route -->
 
       <!-- Start:: rates Route -->
-       <div
+      <div
         class="home_route"
         @click="$emit('fireToggleNavDrawerEmit')"
-        v-if="
-          $can('rates index', 'rates')
-        "
+        v-if="$can('rates index', 'rates')"
       >
         <router-link to="/app-rate/all">
           <span class="route_icon">
@@ -1055,12 +1082,10 @@
       <!-- Start:: rates Route -->
 
       <!-- Start:: Referral Codes Route -->
-       <div
+      <div
         class="home_route"
         @click="$emit('fireToggleNavDrawerEmit')"
-        v-if="
-          $can('referralprovidercodes index', 'referralprovidercodes')
-        "
+        v-if="$can('referralprovidercodes index', 'referralprovidercodes')"
       >
         <router-link to="/referral-providers-codes/all">
           <span class="route_icon">
@@ -1079,12 +1104,10 @@
       <!-- End:: Referral Codes Route -->
 
       <!-- Start:: Orders and Quotations Management Route -->
-       <div
+      <div
         class="home_route"
         @click="$emit('fireToggleNavDrawerEmit')"
-        v-if="
-          $can('orders index', 'orders')
-        "
+        v-if="$can('orders index', 'orders')"
       >
         <router-link to="/orders-and-quotations/all">
           <span class="route_icon">
@@ -1168,7 +1191,10 @@
       </div>
       <!-- End:: app settings Route -->
       <!-- Start:: Side Nav Routes -->
-      <div class="side_routes_wrapper" v-if="$can('settings index', 'settings')">
+      <div
+        class="side_routes_wrapper"
+        v-if="$can('settings index', 'settings')"
+      >
         <a-menu
           style="width: 100%"
           mode="vertical"
@@ -1338,20 +1364,25 @@ export default {
           key: "dashboard",
           title: this.$t("SIDENAV.control_admins"),
           icon: require("@/assets/media/icons/ui_icons/roles.svg"),
-          hasPermission: this.$can('read-role', 'الأدوار والصلاحيات') || $can('read-role', 'Roles & Permissions'),
+          hasPermission:
+            this.$can("read-role", "الأدوار والصلاحيات") ||
+            $can("read-role", "Roles & Permissions"),
           children: [
             {
               key: "roles",
               title: this.$t("SIDENAV.Roles.title"),
               route: "/roles/all",
               hasPermission:
-                this.$can('read-role', 'الأدوار والصلاحيات') || $can('read-role', 'Roles & Permissions')
+                this.$can("read-role", "الأدوار والصلاحيات") ||
+                $can("read-role", "Roles & Permissions"),
             },
             {
               key: "admins",
               title: this.$t("SIDENAV.Admins.title"),
               route: "/admins/all",
-              hasPermission: this.$can('read-admin', 'المدراء') || $can('read-admin', 'Admins'),
+              hasPermission:
+                this.$can("read-admin", "المدراء") ||
+                $can("read-admin", "Admins"),
             },
           ],
         },

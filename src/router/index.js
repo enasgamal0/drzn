@@ -774,8 +774,6 @@ const routes = [
       },
       // End:: Packages Financial Reports Routes Config
 
-      
-
       // Start:: Roles Routes Config
       {
         path: "/roles",
@@ -928,66 +926,66 @@ const routes = [
       // End:: users Routes Config
 
       // Start:: products  Config
-      // {
-      //   path: "/products",
-      //   name: "products",
-      //   component: ProductsHome,
-      //   meta: {
-      //     middleware: [auth],
-      //   },
-      //   children: [
-      //     {
-      //       path: "all",
-      //       name: "Allproducts",
-      //       component: AllProducts,
-      //       meta: {
-      //         middleware: [auth],
-      //         requiresPermission: {
-      //           action: "products index",
-      //           subject: "products",
-      //         },
-      //       },
-      //     },
-      //     {
-      //       path: "create",
-      //       name: "Createproducts",
-      //       component: CreateProducts,
-      //       meta: {
-      //         middleware: [auth],
-      //         requiresPermission: {
-      //           action: "products create",
-      //           subject: "products",
-      //         },
-      //       },
-      //     },
-      //     {
-      //       path: "edit/:id",
-      //       name: "Editproducts",
-      //       component: EditProducts,
-      //       props: true,
-      //       meta: {
-      //         middleware: [auth],
-      //         requiresPermission: {
-      //           action: "products edit",
-      //           subject: "products",
-      //         },
-      //       },
-      //     },
-      //     {
-      //       path: "show/:id",
-      //       name: "Showproducts",
-      //       component: ShowProducts,
-      //       props: true,
-      //       meta: {
-      //         middleware: [auth],
-      //         requiresPermission: {
-      //           action: "products show",
-      //           subject: "products",
-      //         },
-      //       },
-      //     },
-      //   ],
-      // },
+      {
+        path: "/products",
+        name: "products",
+        component: ProductsHome,
+        meta: {
+          middleware: [auth],
+        },
+        children: [
+          {
+            path: "all",
+            name: "Allproducts",
+            component: AllProducts,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "products index",
+                subject: "products",
+              },
+            },
+          },
+          {
+            path: "create",
+            name: "Createproducts",
+            component: CreateProducts,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "products create",
+                subject: "products",
+              },
+            },
+          },
+          {
+            path: "edit/:id",
+            name: "Editproducts",
+            component: EditProducts,
+            props: true,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "products edit",
+                subject: "products",
+              },
+            },
+          },
+          {
+            path: "show/:id",
+            name: "Showproducts",
+            component: ShowProducts,
+            props: true,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "products show",
+                subject: "products",
+              },
+            },
+          },
+        ],
+      },
       // End:: products Config
 
       // Start:: orders  Config
@@ -1215,8 +1213,7 @@ const routes = [
       },
       // End:: CustomerOpinions Config
 
-
-// Start:: recommendations Config
+      // Start:: recommendations Config
       {
         path: "/recommendations",
         name: "recommendations",
@@ -1533,65 +1530,65 @@ const routes = [
 
       // Start:: services  Config
       {
-      path: "/services",
-      name: "services",
-      component: ServicesHome,
-      meta: {
-        middleware: [auth],
+        path: "/services",
+        name: "services",
+        component: ServicesHome,
+        meta: {
+          middleware: [auth],
+        },
+        children: [
+          {
+            path: "all",
+            name: "Allservices",
+            component: AllServices,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "services index",
+                subject: "services",
+              },
+            },
+          },
+          {
+            path: "create",
+            name: "Createservices",
+            component: CreateServices,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "services create",
+                subject: "services",
+              },
+            },
+          },
+          {
+            path: "edit/:id",
+            name: "Editservices",
+            component: EditServices,
+            props: true,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "services edit",
+                subject: "services",
+              },
+            },
+          },
+          {
+            path: "show/:id",
+            name: "Showservices",
+            component: ShowServices,
+            props: true,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "services show",
+                subject: "services",
+              },
+            },
+          },
+        ],
       },
-      children: [
-        {
-          path: "all",
-          name: "Allservices",
-          component: AllServices,
-          meta: {
-            middleware: [auth],
-            requiresPermission: {
-              action: "services index",
-              subject: "services",
-            },
-          },
-        },
-        {
-          path: "create",
-          name: "Createservices",
-          component: CreateServices,
-          meta: {
-            middleware: [auth],
-            requiresPermission: {
-              action: "services create",
-              subject: "services",
-            },
-          },
-        },
-        {
-          path: "edit/:id",
-          name: "Editservices",
-          component: EditServices,
-          props: true,
-          meta: {
-            middleware: [auth],
-            requiresPermission: {
-              action: "services edit",
-              subject: "services",
-            },
-          },
-        },
-        {
-          path: "show/:id",
-          name: "Showservices",
-          component: ShowServices,
-          props: true,
-          meta: {
-            middleware: [auth],
-            requiresPermission: {
-              action: "services show",
-              subject: "services",
-            },
-          },
-        },
-      ],
-    },
       // End:: services Config
 
       // Start:: Sectors Config
@@ -1718,7 +1715,7 @@ const routes = [
           },
         ],
       },
-        // End:: customers Config
+      // End:: customers Config
 
       // Start:: reasons  Config
       // {
@@ -1929,7 +1926,8 @@ const routes = [
                 action: "acceptedproviders index",
                 subject: "acceptedproviders",
               },
-            }},
+            },
+          },
           {
             path: "show/:id",
             name: "ShowUserRequests",
@@ -3076,8 +3074,6 @@ const routes = [
         ],
       },
       // End:: sub Categories Questions Routes Config
-
-      
 
       // Start:: management Routes Config
       // {

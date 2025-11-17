@@ -97,7 +97,7 @@
           </button>
         </div>
 
-        <div class="title_route_wrapper" v-if="$can('admins create', 'admins')">
+        <div class="title_route_wrapper" v-if="$can('create-admin', 'Admins') || $can('create-admin', 'المدراء')">
           <router-link to="/admins/create">
             {{ $t("BUTTONS.addAdmin") }}
           </router-link>
@@ -171,16 +171,25 @@
 
         <!-- Start:: Phone -->
         <template v-slot:[`item.phone`]="{ item }">
-          <span class="text-danger" v-if="!item.phone">
-            {{ $t("TABLES.noData") }}
+          <span v-if="!item.phone">
+            -
           </span>
           <span v-else> {{ item.phone }} </span>
         </template>
         <!-- End:: Phone -->
 
+        <!-- Start:: Email -->
+        <template v-slot:[`item.email`]="{ item }">
+          <span v-if="!item.email">
+            -
+          </span>
+          <span v-else> {{ item.email }} </span>
+        </template>
+        <!-- End:: Email -->
+
         <!-- Start:: Activation Status -->
-        <template v-slot:[`item.is_active`]="{ item }">
-          <span class="text-success text-h5" v-if="item?.is_active">
+        <template v-slot:[`item.status`]="{ item }">
+          <span class="text-success text-h5" v-if="item?.status == 'active'">
             <i class="far fa-check"></i>
           </span>
           <span class="text-danger text-h5" v-else>
@@ -212,7 +221,7 @@
         <!-- Start:: Actions -->
         <template v-slot:[`item.actions`]="{ item }">
           <div class="actions">
-            <a-tooltip placement="bottom" v-if="$can('admins show', 'admins')">
+            <a-tooltip placement="bottom" v-if="$can('read-admin', 'Admins') || $can('read-admin', 'المدراء')">
               <template slot="title">
                 <span>{{ $t("BUTTONS.show") }}</span>
               </template>
@@ -223,7 +232,7 @@
 
             <a-tooltip
               placement="bottom"
-              v-if="$can('admins edit', 'admins') && item?.id !== 1"
+              v-if="$can('update-admin', 'Admins') || $can('update-admin', 'المدراء') && item?.id !== 1"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.edit") }}</span>
@@ -235,7 +244,7 @@
 
             <a-tooltip
               placement="bottom"
-              v-if="$can('admins delete', 'admins') && item?.id !== 1"
+              v-if="$can('delete-admin', 'Admins') || $can('delete-admin', 'المدراء') && item?.id !== 1"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.delete") }}</span>
@@ -245,7 +254,7 @@
               </button>
             </a-tooltip>
 
-            <template v-if="$can('admins activate', 'admins') && item?.id !== 1">
+            <template v-if="$can('activate-admin', 'Admins') || $can('activate-admin', 'المدراء') && item?.id !== 1">
               <a-tooltip placement="bottom" v-if="!item?.is_active">
                 <template slot="title">
                   <span>{{ $t("BUTTONS.activate") }}</span>
@@ -458,7 +467,7 @@ export default {
         },
         {
           text: this.$t("TABLES.Admins.phone"),
-          value: "mobile",
+          value: "phone",
           align: "center",
           sortable: false,
         },
@@ -482,7 +491,7 @@ export default {
         },
         {
           text: this.$t("PLACEHOLDERS.status"),
-          value: "is_active",
+          value: "status",
           align: "center",
           width: "120",
           sortable: false,
@@ -569,21 +578,19 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: "admins",
+          url: "users?filter[user_type]=individual",
           params: {
             page: this.paginations.current_page,
-            name: this.filterOptions.name,
-            email: this.filterOptions.email,
-            mobile: this.filterOptions.phone,
-            // role: this.filterOptions.role?.id,
-            is_active: this.filterOptions.isActive?.value,
+            search: this.filterOptions.name,
+            'filter[email]': this.filterOptions.email,
+            'filter[phone]': this.filterOptions.phone,
+            'filter[is_active]': this.filterOptions.isActive?.value,
           },
         });
         this.loading = false;
-        console.log("All Data ==>", res.data.data.data);
-        this.tableRows = res.data.data.data;
-        this.paginations.last_page = res.data.data.meta.last_page;
-        this.paginations.items_per_page = res.data.data.meta.per_page;
+        this.tableRows = res.data.data;
+        this.paginations.last_page = res.data.pagination?.last_page;
+        this.paginations.items_per_page = res.data.pagination?.per_page;
       } catch (error) {
         this.loading = false;
         console.log(error.response.data.message);
