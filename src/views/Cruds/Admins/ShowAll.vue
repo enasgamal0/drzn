@@ -254,8 +254,8 @@
               </button>
             </a-tooltip>
 
-            <template v-if="$can('activate-admin', 'Admins') || $can('activate-admin', 'المدراء') && item?.id !== 1">
-              <a-tooltip placement="bottom" v-if="!item?.is_active">
+            <template v-if="$can('update-admin', 'Admins') || $can('update-admin', 'المدراء') && item?.id !== 1">
+              <a-tooltip placement="bottom" v-if="item?.status == 'inactive'">
                 <template slot="title">
                   <span>{{ $t("BUTTONS.activate") }}</span>
                 </template>
@@ -266,7 +266,7 @@
                   <i class="fad fa-check-circle"></i>
                 </button>
               </a-tooltip>
-              <a-tooltip placement="bottom" v-if="item?.is_active">
+              <a-tooltip placement="bottom" v-if="item?.status == 'active'">
                 <template slot="title">
                   <span>{{ $t("BUTTONS.deactivate") }}</span>
                 </template>
@@ -414,12 +414,12 @@ export default {
         {
           id: 1,
           name: this.$t("STATUS.active"),
-          value: 1,
+          value: 'active',
         },
         {
           id: 2,
           name: this.$t("STATUS.notActive"),
-          value: 0,
+          value: 'inactive',
         },
       ];
     },
@@ -578,13 +578,13 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: "users?filter[user_type]=individual",
+          url: "users?filter[user_type]=individual&per_page=10",
           params: {
             page: this.paginations.current_page,
             search: this.filterOptions.name,
             'filter[email]': this.filterOptions.email,
             'filter[phone]': this.filterOptions.phone,
-            'filter[is_active]': this.filterOptions.isActive?.value,
+            'filter[status]': this.filterOptions.isActive?.value,
           },
         });
         this.loading = false;
@@ -660,7 +660,7 @@ export default {
       try {
         await this.$axios({
           method: "DELETE",
-          url: `admins/${this.itemToDelete?.id}`,
+          url: `users/${this.itemToDelete?.id}`,
         });
         this.dialogDelete = false;
         this.tableRows = this.tableRows.filter((item) => {

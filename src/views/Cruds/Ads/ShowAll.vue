@@ -19,17 +19,20 @@
         <div class="filter_form_wrapper">
           <form @submit.prevent="submitFilterForm">
             <div class="row justify-content-center align-items-center w-100">
-              <base-picker-input
-                col="5"
-                type="date"
-                :placeholder="$t('PLACEHOLDERS.start_date')"
-                v-model.trim="filterOptions.startDate"
+              <base-input
+                col="4"
+                type="text"
+                :placeholder="$t('TABLES.ImagesSpaces.name')"
+                v-model.trim="filterOptions.name"
+                :maxlength="100"
               />
-              <base-picker-input
-                col="5"
-                type="date"
-                :placeholder="$t('PLACEHOLDERS.end_date')"
-                v-model.trim="filterOptions.endDate"
+              <base-select-input
+                col="4"
+                :optionsList="activeStatuses"
+                :placeholder="$t('PLACEHOLDERS.status')"
+                v-model="filterOptions.is_active"
+                trackBy="value"
+                label="name"
               />
             </div>
 
@@ -66,7 +69,7 @@
 
         <div
           class="title_route_wrapper"
-          v-if="$can('advertisements create', 'advertisements')"
+          v-if="$can('create-advertising', 'Advertising') || $can('create-advertising', 'الإعلانات')"
         >
           <router-link to="/ads/create">
             {{ $t("PLACEHOLDERS.add_ads") }}
@@ -89,15 +92,15 @@
       >
         <!-- Start:: No Data State -->
         <template v-slot:no-data>
-          {{ $t("TABLES.noData") }}
+          -
         </template>
         <!-- Start:: No Data State -->
 
         <!-- Start:: Item Image -->
         <template v-slot:[`item.id`]="{ item, index }">
           <div class="table_image_wrapper">
-            <h6 class="text-danger" v-if="!item.id">
-              {{ $t("TABLES.noData") }}
+            <h6 v-if="!item.id">
+              -
             </h6>
             <p v-else>
               {{
@@ -112,21 +115,21 @@
 
         <!-- Start:: Title -->
         <template v-slot:[`item.name`]="{ item }">
-          <p class="text-danger" v-if="!item.name">{{ $t("TABLES.noData") }}</p>
+          <p v-if="!item.name">-</p>
           <p v-else>{{ item.name }}</p>
         </template>
         <!-- End:: Title -->
         <!-- Start:: Item Image -->
-        <template v-slot:[`item.image`]="{ item }">
+        <template v-slot:[`item.advertising_url`]="{ item }">
           <div class="table_image_wrapper">
-            <h6 class="text-danger" v-if="!item.image">
-              {{ $t("TABLES.noData") }}
+            <h6 v-if="!item.advertising_url">
+              -
             </h6>
 
             <button class="my-1" @click="showImageModal(item)" v-else>
               <video
-                v-if="item.image.endsWith('mp4')"
-                :src="item.image"
+                v-if="item.advertising_type === 'video' || (item.advertising_url && ['mp4', 'mov', 'avi', 'wmv', 'flv', 'mkv', 'webm', 'm4v'].some(ext => item.advertising_url.toLowerCase().endsWith(ext)))"
+                :src="item.advertising_url"
                 width="80"
                 height="60"
                 class="rounded"
@@ -134,7 +137,7 @@
               <img
                 v-else
                 class="rounded"
-                :src="item.image"
+                :src="item.advertising_url"
                 width="60"
                 height="60"
               />
@@ -149,7 +152,7 @@
             class="activation"
             dir="ltr"
             style="z-index: 1"
-            v-if="$can('advertisements activate', 'advertisements')"
+            v-if="$can('read-advertising:read-inactive', 'Advertising') || $can('read-advertising:read-inactive', 'الإعلانات')"
           >
             <v-switch
               class="mt-2"
@@ -176,7 +179,7 @@
           <div class="actions">
             <a-tooltip
               placement="bottom"
-              v-if="$can('advertisements show', 'advertisements')"
+              v-if="$can('read-advertising', 'Advertising') || $can('read-advertising', 'الإعلانات')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.show") }}</span>
@@ -188,7 +191,7 @@
 
             <a-tooltip
               placement="bottom"
-              v-if="$can('advertisements edit', 'advertisements')"
+              v-if="$can('update-advertising', 'Advertising') || $can('update-advertising', 'الإعلانات')"
               :class="{ disable_parent: item.can_edit === true }"
             >
               <template slot="title">
@@ -205,7 +208,7 @@
 
             <a-tooltip
               placement="bottom"
-              v-if="$can('advertisements delete', 'advertisements')"
+              v-if="$can('delete-advertising', 'Advertising') || $can('delete-advertising', 'الإعلانات')"
               :class="{ disable_parent: item.can_delete === true }"
             >
               <template slot="title">
@@ -340,8 +343,8 @@ export default {
       // Start:: Filter Data
       filterFormIsActive: false,
       filterOptions: {
-        startDate: null,
-        endDate: null,
+        name: null,
+        is_active: null,
       },
       // End:: Filter Data
 
@@ -362,8 +365,8 @@ export default {
           align: "center",
         },
         {
-          text: this.$t("PLACEHOLDERS.image"),
-          value: "image",
+          text: this.$t("PLACEHOLDERS.advertisement"),
+          value: "advertising_url",
           sortable: false,
           align: "center",
         },
@@ -434,8 +437,8 @@ export default {
       this.setTableRows();
     },
     async resetFilter() {
-      this.filterOptions.startDate = null;
-      this.filterOptions.endDate = null;
+      this.filterOptions.name = null;
+      this.filterOptions.is_active = null;
       if (this.$route.query.page !== "1") {
         await this.$router.push({ path: "/ads/all", query: { page: 1 } });
       }
@@ -461,17 +464,17 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: "advertisements",
+          url: "advertisings?per_page=10",
           params: {
             page: this.paginations.current_page,
-            'created_at[0]': this.filterOptions.startDate,
-            'created_at[1]': this.filterOptions.endDate,
+            search: this.filterOptions.name,
+            'filter[is_active]': this.filterOptions.is_active?.value,
           },
         });
         this.loading = false;
-        this.tableRows = res.data.data.data;
-        this.paginations.last_page = res.data.data.meta.last_page;
-        this.paginations.items_per_page = res.data.data.meta.per_page;
+        this.tableRows = res.data.data;
+        this.paginations.last_page = res.data.pagination.last_page;
+        this.paginations.items_per_page = res.data.pagination.per_page;
       } catch (error) {
         this.loading = false;
         console.log(error.response.data.message);
@@ -489,11 +492,15 @@ export default {
     async changeActivationStatus(item) {
       try {
         await this.$axios({
-          method: "POST",
-          url: `advertisements/activate/${item.id}`,
+          method: "PATCH",
+          url: `advertisings/${item.id}`,
+          data: {
+            is_active: item.is_active ? 1 : 0,
+          },
         });
         this.$message.success(this.$t("MESSAGES.changeActivation"));
       } catch (error) {
+        item.is_active = !item.is_active;
         this.$message.error(error.response.data.message);
       }
     },
@@ -512,10 +519,16 @@ export default {
 
     showImageModal(item) {
       this.dialogImage = true;
-      this.selectedItemImage = item.image;
+      this.selectedItemImage = item.advertising_url;
       const videoExtensions = ["mp4", "mov", "avi", "wmv", "flv", "mkv", "webm", "m4v"];
-      const fileExtension = item.image.split(".").pop().toLowerCase();
-      this.selectedItemType = videoExtensions.includes(fileExtension) ? "video" : "image";
+      if (item.advertising_type === 'video') {
+        this.selectedItemType = "video";
+      } else if (item.advertising_url) {
+        const fileExtension = item.advertising_url.split(".").pop().toLowerCase();
+        this.selectedItemType = videoExtensions.includes(fileExtension) ? "video" : "image";
+      } else {
+        this.selectedItemType = "image";
+      }
     },
 
     // ===== Start:: Delete
@@ -528,7 +541,7 @@ export default {
       try {
         await this.$axios({
           method: "DELETE",
-          url: `advertisements/${this.itemToDelete.id}`,
+          url: `advertisings/${this.itemToDelete.id}`,
         });
         this.dialogDelete = false;
         this.tableRows = this.tableRows.filter((item) => {

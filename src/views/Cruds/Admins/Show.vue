@@ -16,7 +16,7 @@
       <!-- ==== Start:: Status Badges ==== -->
       <div class="badges_wrapper justify-content-between">
         <div class="wrapper">
-          <v-chip color="amber darken-2" text-color="white">
+          <v-chip color="amber darken-2" text-color="white" v-if="data.numberOfVisits">
             {{ $t("TITLES.numberOfVisits", { number: data.numberOfVisits }) }}
           </v-chip>
           <v-chip
@@ -27,10 +27,10 @@
             {{ $t("TITLES.lastVisit", { date: data.lastVisit }) }}
           </v-chip>
         </div>
-        <v-chip v-if="data.active == 1" :color="'green'" text-color="white">
+        <v-chip v-if="data.active == 'active'" :color="'green'" text-color="white">
           {{ data.active ? $t("STATUS.active") : $t("STATUS.notActive") }}
         </v-chip>
-        <v-chip v-else-if="data.active == 0" :color="'red'" text-color="white">
+        <v-chip v-else-if="data.active == 'inactive'" :color="'red'" text-color="white">
           {{ data.active ? $t("STATUS.active") : $t("STATUS.notActive") }}
         </v-chip>
       </div>
@@ -40,9 +40,8 @@
       <form @submit.prevent="validateFormInputs">
         <div class="row">
           <!-- Start:: Image Upload Input -->
-          <div class="preview-container text-center my-3">
+          <div class="preview-container text-center my-3" v-if="data.image.path">
             <img
-              v-if="data.image.path && !data.image.path?.includes('/assets/avatar.png')"
               col="12"
               :src="data.image.path"
               :alt="$t('PLACEHOLDERS.personalImage')"
@@ -200,17 +199,17 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `admins/${this.id}`,
+          url: `users/${this.id}`,
         });
 
-        this.data.image.path = res.data.data.Admin.image;
-        this.data.name = res.data.data.Admin.name;
-        this.data.email = res.data.data.Admin.email;
-        this.data.phone = res.data.data.Admin.mobile;
-        this.data.role = res.data.data.Admin.roles[0]?.name;
-        this.data.active = res.data.data.Admin.is_active;
-        this.data.numberOfVisits = res.data.data.Admin.login_count;
-        this.data.lastVisit = res.data.data.Admin.last_login;
+        this.data.image.path = res.data.data.avatar;
+        this.data.name = res.data.data.name;
+        this.data.email = res.data.data.email;
+        this.data.phone = res.data.data.phone;
+        this.data.role = res.data.data.roles[0]?.name;
+        this.data.active = res.data.data.status;
+        this.data.numberOfVisits = res.data.data.login_number;
+        this.data.lastVisit = res.data.data.last_login_date;
       } catch (error) {
         console.log(error.response.data.message);
       }

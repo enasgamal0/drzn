@@ -24,7 +24,7 @@
             <!-- Display image -->
             <div class="preview-container text-center my-3">
               <video
-                v-if="['mp4', 'mov', 'avi', 'wmv', 'flv', 'mkv', 'webm', 'm4v'].some(ext => data.image.path.endsWith(ext))"
+                v-if="data.image.type === 'video' || ['mp4', 'mov', 'avi', 'wmv', 'flv', 'mkv', 'webm', 'm4v'].some(ext => data.image.path.toLowerCase().endsWith(ext))"
                 :src="data.image.path"
                 controls
                 autoplay
@@ -34,36 +34,64 @@
             </div>
           </div>
 
-          <!-- <base-image-upload-input
-            col="12"
-            identifier="image"
-            :placeholder="$t('PLACEHOLDERS.image')"
-            disabled
-            :preSelectedImage="data.image.path"
-          /> -->
           <!-- Start:: Name Input -->
           <base-input
             col="6"
             type="text"
-            :placeholder="$t('PLACEHOLDERS.nameAr')"
-            v-model.trim="data.nameAr"
+            :placeholder="$t('TABLES.ImagesSpaces.name')"
+            v-model.trim="data.name"
             disabled
           />
           <!-- End:: Name Input -->
 
-          <!-- Start:: Name Input -->
+          <!-- Start:: Link Type -->
           <base-input
             col="6"
             type="text"
-            :placeholder="$t('PLACEHOLDERS.nameEn')"
-            v-model.trim="data.nameEn"
+            :placeholder="$t('PLACEHOLDERS.link_type')"
+            :value="getLinkTypeLabel()"
             disabled
           />
+          <!-- End:: Link Type -->
+
+          <!-- Start:: External URL (shown when link_type is external) -->
+          <base-input
+            v-if="data.link_type === 'external'"
+            col="12"
+            type="text"
+            :placeholder="$t('PLACEHOLDERS.external_url')"
+            v-model.trim="data.external_url"
+            disabled
+          />
+          <!-- End:: External URL -->
+
+          <!-- Start:: Internal Type (shown when link_type is internal) -->
+          <base-input
+            v-if="data.link_type === 'internal'"
+            :col="data.internal_type ? 6 : 12"
+            type="text"
+            :placeholder="$t('PLACEHOLDERS.internal_type')"
+            :value="getInternalTypeLabel()"
+            disabled
+          />
+          <!-- End:: Internal Type -->
+
+          <!-- Start:: Item Name (shown when link_type is internal) -->
+          <base-input
+            v-if="data.link_type === 'internal'"
+            col="6"
+            type="text"
+            :placeholder="$t('PLACEHOLDERS.item')"
+            v-model.trim="data.item_name"
+            disabled
+          />
+          <!-- End:: Item Name -->
+
           <base-picker-input
             col="6"
             type="date"
             :placeholder="$t('PLACEHOLDERS.start_date')"
-            v-model.trim="data.publish_start_date"
+            v-model.trim="data.start_date"
             disabled
           />
 
@@ -71,22 +99,20 @@
             col="6"
             type="date"
             :placeholder="$t('PLACEHOLDERS.end_date')"
-            v-model.trim="data.publish_end_date"
+            v-model.trim="data.end_date"
             disabled
           />
-
-          <!-- End:: Name Input -->
 
           <!-- Start:: Deactivate Switch Input -->
           <div class="input_wrapper switch_wrapper my-5">
             <v-switch
               color="green"
               :label="
-                data.active
+                data.is_active
                   ? $t('PLACEHOLDERS.active')
                   : $t('PLACEHOLDERS.notActive')
               "
-              v-model="data.active"
+              v-model="data.is_active"
               hide-details
               disabled
             ></v-switch>
@@ -119,13 +145,15 @@ export default {
           path: null,
           type: null, // 'image' or 'video', if applicable
         },
-        nameAr: null,
-        nameEn: null,
-        active: true,
-        publish_start_date: null,
-        publish_end_date: null,
-        media: null,
-        media_type: null,
+        name: null,
+        link_type: null,
+        external_url: null,
+        internal_type: null,
+        item_id: null,
+        item_name: null,
+        start_date: null,
+        end_date: null,
+        is_active: true,
       },
       // End:: Data Collection To Send
     };
@@ -134,6 +162,24 @@ export default {
   computed: {},
 
   methods: {
+    getLinkTypeLabel() {
+      if (this.data.link_type === 'external') {
+        return this.$t("PLACEHOLDERS.external") || "External";
+      } else if (this.data.link_type === 'internal') {
+        return this.$t("PLACEHOLDERS.internal") || "Internal";
+      }
+      return "-";
+    },
+    getInternalTypeLabel() {
+      if (this.data.internal_type === 'product') {
+        return this.$t("PLACEHOLDERS.product") || "Product";
+      } else if (this.data.internal_type === 'offer') {
+        return this.$t("PLACEHOLDERS.offer") || "Offer";
+      } else if (this.data.internal_type === 'category') {
+        return this.$t("PLACEHOLDERS.category") || "Category";
+      }
+      return "-";
+    },
     onCopy(event) {
       event.preventDefault();
     },
@@ -145,21 +191,71 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `advertisements/${this.$route.params.id}`,
+          url: `advertisings/${this.$route.params.id}`,
         });
-        this.data.image.path = res.data.data.Advertisement.image;
-        // this.data.image.type = "image";
-        this.data.nameAr = res.data.data.Advertisement.name_ar;
-        this.data.nameEn = res.data.data.Advertisement.name_en;
-        this.data.publish_start_date = res.data.data.Advertisement.start_date;
-        this.data.publish_end_date = res.data.data.Advertisement.end_date;
-        this.data.active = res.data.data.Advertisement.is_active;
+        const ad = res.data.data;
+        this.data.image.path = ad.advertising_url;
+        this.data.image.type = ad.advertising_type || (ad.advertising_url && ['mp4', 'mov', 'avi', 'wmv', 'flv', 'mkv', 'webm', 'm4v'].some(ext => ad.advertising_url.toLowerCase().endsWith(ext)) ? 'video' : 'image');
+        // Handle name from translations
+        this.data.name = ad.name || (ad.translations?.ar?.name) || (ad.translations?.en?.name) || '';
+        this.data.link_type = ad.link_type;
+        this.data.external_url = ad.external_url;
+        // Handle new internal_type structure (object with type and data)
+        this.data.internal_type = ad.internal_type?.type || ad.internal_type;
+        this.data.item_id = ad.item_id;
+        this.data.start_date = ad.start_date;
+        this.data.end_date = ad.end_date;
+        this.data.is_active = ad.is_active;
+        
+        // Fetch item name if internal type - use data from internal_type.data if available
+        if (this.data.link_type === 'internal' && this.data.internal_type && this.data.item_id) {
+          if (ad.internal_type?.data?.name) {
+            // Use the name from internal_type.data if available
+            this.data.item_name = ad.internal_type.data.name || 
+                                  ad.internal_type.data.translations?.ar?.name || 
+                                  ad.internal_type.data.translations?.en?.name || 
+                                  ad.internal_type.data.name_ar || 
+                                  ad.internal_type.data.title || 
+                                  ad.internal_type.data.title_ar || 
+                                  '-';
+          } else {
+            // Fallback to API call if data is not available
+            await this.fetchItemName(this.data.internal_type, this.data.item_id);
+          }
+        }
       } catch (error) {
         this.loading = false;
         console.log(error.response.data.message);
       }
     },
     // end all ads data
+    
+    // Start:: Fetch Item Name
+    async fetchItemName(type, itemId) {
+      try {
+        let url = "";
+        if (type === "product") {
+          url = `products/${itemId}`;
+        } else if (type === "offer") {
+          url = `offers/${itemId}`;
+        } else if (type === "category") {
+          url = `product-categories/${itemId}`;
+        }
+
+        if (url) {
+          let res = await this.$axios({
+            method: "GET",
+            url: url,
+          });
+          const item = res.data.data?.Product || res.data.data?.Offer || res.data.data?.Category || res.data.data;
+          this.data.item_name = item.name || item.name_ar || item.title || item.title_ar || "-";
+        }
+      } catch (error) {
+        console.log(error.response?.data?.message);
+        this.data.item_name = "-";
+      }
+    },
+    // End:: Fetch Item Name
   },
 
   created() {

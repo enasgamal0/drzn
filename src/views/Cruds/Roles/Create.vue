@@ -5,7 +5,7 @@
       <h4>{{ $t("TITLES.addRole") }}</h4>
     </div>
     <div class="col-12 text-end">
-      <v-btn @click="$router.go(-1)" style="color: #e1423d">
+      <v-btn @click="$router.go(-1)" style="color: #E1423D">
         <i class="fas fa-backward"></i>
       </v-btn>
     </div>

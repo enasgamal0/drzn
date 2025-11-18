@@ -21,6 +21,7 @@
             identifier="main_image"
             :preSelectedImage="data.main_image.path"
             :placeholder="$t('PLACEHOLDERS.productImg')"
+            @selectImage="selectMainImage"
             required
           />
           <!-- End:: Main Image Upload Input -->

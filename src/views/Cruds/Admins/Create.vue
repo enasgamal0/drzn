@@ -233,9 +233,9 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: "roles?page=0&limit=0&status=1",
+          url: "roles?filter[is_active]=1&paginate=false",
         });
-        this.roles = res.data.data.data;
+        this.roles = res.data.data;
       } catch (error) {
         this.loading = false;
         console.log(error.response.data.message);
@@ -276,7 +276,7 @@ export default {
       try {
         await this.$axios({
           method: "POST",
-          url: `admins`,
+          url: `admin/users`,
           data: REQUEST_DATA,
         });
         this.isWaitingRequest = false;
@@ -293,7 +293,7 @@ export default {
   async created() {
     // Start:: Fire Methods
     await this.getRoles();
-    await this.getAllareas();
+    // await this.getAllareas();
     // End:: Fire Methods
     this.$nextTick(() => {
       this.data.phone = "";

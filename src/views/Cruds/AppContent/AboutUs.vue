@@ -78,14 +78,22 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `settings-general?key=about_us`,
+          url: `settings?include=translations`,
+          params: {
+            "filter[key]": "about_us_page",
+          },
         });
         // Start:: Set Data
-        this.data.contentAr = res.data.data.data[0].value?.text?.ar;
-        this.data.contentEn = res.data.data.data[0].value?.text?.en;
+        const setting = res.data.data.find((item) => item.key === "about_us_page");
+        if (setting && setting.translations) {
+          const arTranslation = setting.translations.find((t) => t.locale === "ar");
+          const enTranslation = setting.translations.find((t) => t.locale === "en");
+          this.data.contentAr = arTranslation?.value || setting.value || null;
+          this.data.contentEn = enTranslation?.value || setting.value || null;
+        }
         // End:: Set Data
       } catch (error) {
-        console.log(error.response.data.message);
+        console.log(error.response?.data?.message || error.message);
       }
     },
     // End:: Get Data To Edit
@@ -115,19 +123,17 @@ export default {
 
     // Start:: Submit Form
     async submitForm() {
-      const REQUEST_DATA = new FormData();
-      // Start:: Append Request Data
-      REQUEST_DATA.append("key", "about_us");
-      REQUEST_DATA.append("value[text][ar]", this.data.contentAr);
-      REQUEST_DATA.append("value[text][en]", this.data.contentEn);
-      REQUEST_DATA.append("value[title][ar]", "عن التطبيق");
-      REQUEST_DATA.append("value[title][en]", "About us");
-      // REQUEST_DATA.append("_method", "PUT");
+      const REQUEST_DATA = {
+        about_us_page: {
+          ar: this.data.contentAr,
+          en: this.data.contentEn,
+        },
+      };
 
       try {
         await this.$axios({
-          method: "POST",
-          url: `settings?key=about_us`,
+          method: "PATCH",
+          url: `settings`,
           data: REQUEST_DATA,
         });
         this.isWaitingRequest = false;
@@ -135,7 +141,7 @@ export default {
         this.getDataToEdit();
       } catch (error) {
         this.isWaitingRequest = false;
-        this.$message.error(error.response.data.message);
+        this.$message.error(error.response?.data?.message || error.message);
       }
     },
     // End:: Submit Form

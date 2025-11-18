@@ -54,6 +54,11 @@
       "cleaning_financial_report": "Cleaning Companies Financial Reports",
       "financial_reports": "Financial Reports"
     },
+    "LiveChat": {
+      "title": "Live Chat",
+      "showAll": "All Live Chat",
+      "add": "Start a New Live Chat"
+    },
     "notifications": {
       "title": "Notifications",
       "showAll": "All Notifications",
@@ -105,7 +110,8 @@
     "ContactMessages": {
       "title": "Contact Messages",
       "showAll": "All Contact Messages",
-      "show": "Show Message Data"
+      "show": "Show Message Data",
+      "liveChat": "Live Chat"
     },
     "AppContent": {
       "addresses": "Addresses Management",
@@ -1184,6 +1190,7 @@
   },
 
   "BUTTONS": {
+    "chat": "Show Chat",
     "showDetails": "Show Details",
     "reset": "Reset",
     "addOption": "Add a New Option",
@@ -1311,6 +1318,8 @@
   },
 
   "PLACEHOLDERS": {
+    "type_message": "Type your message here...",
+    "offer": "Offer",
     "manage_districts": "Districts Management",
     "add_new_district": "Add a New District",
     "edit_district_data": "Edit District Data",
@@ -1804,6 +1813,9 @@
     "fromDate": "Creation Date (From)",
     "toDate": "Creation Date (To)",
     "messageReplay": "Replay Message",
+    "last_message": "Last Message",
+    "data_last_message": "Last Message Date",
+    "last_message_status": "Last Message Status",
     "suggestionReply": "Reply To Suggestion",
     "role": "Role",
     "Clients": "Clients",
@@ -1968,6 +1980,12 @@
     "ads_name": "Advertisement Name",
     "start_date": "Start Publish Date",
     "end_date": "End Publish Date ",
+    "link_type": "Link Type",
+    "external": "External",
+    "internal": "Internal",
+    "external_url": "External URL",
+    "internal_type": "Internal Type",
+    "item": "Item",
 
     "Multiple_Select": "Multiple Select",
     "Single_Select": "Single Select",
@@ -2302,6 +2320,8 @@
     "download_pdf": "Download PDF",
 
     "guest_name": "Guest Name",
+    "guest": "Guest",
+    "anonymous": "Anonymous",
     "host_name": "Host Name ",
     "suggestions": "Suggestions",
     "publish_status": " Publishing Status",
@@ -2532,6 +2552,9 @@
     "expectedTime": "Expected Time Field Can't Be Empty",
     "price": "Price Field Can't Be Empty",
     "image": "You Must Select An Image",
+    "external_url": "External URL field is required",
+    "internal_link": "Internal type and item fields are required",
+    "end_date_after_start": "End date must be after or equal to start date",
     "startDate": "You Must Select A Start Date",
     "endDate": "You Must Select An End Date",
     "handle": "The start date must be before the end date",

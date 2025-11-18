@@ -188,82 +188,106 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `settings-general?key=social_contact`,
+          url: `settings?include=translations`,
+          params: {
+            "filter[key]": "phone,email,whatsapp_number,facebook_username,snapchat_username,instagram_username,x_username,tiktok_username,ios,android",
+          },
         });
         // Start:: Set Data
+        const settings = res.data.data;
 
-        // Transform the API response
-        this.phones = res.data.data.data[0]?.value?.mobile?.map((phone) => ({
-          phone: phone,
-        })) || [];
+        // Get phone numbers
+        const phoneSetting = settings.find((item) => item.key === "phone");
+        if (phoneSetting && Array.isArray(phoneSetting.value)) {
+          this.phones = phoneSetting.value.map((phone) => ({ phone: phone }));
+        }
         if (this.phones.length === 0) {
           this.phones.push({ phone: "" });
         }
-        this.data.WhatsApp_contact = res.data.data.data[0]?.value?.whatsapp;
-        this.data.twitter_link = res.data.data.data[0]?.value?.twitter;
-        this.data.facebook_link = res.data.data.data[0]?.value?.facebook;
-        this.data.instagram_link = res.data.data.data[0]?.value?.instagram;
-        this.data.tiktok_link = res.data.data.data[0]?.value?.tikTok;
-        this.data.snapchat_link = res.data.data.data[0]?.value?.snapchat;
-        this.data.email = res.data.data.data[0]?.value?.email;
-        this.data.android = res.data.data.data[0]?.value?.play_store;
-        this.data.ios = res.data.data.data[0]?.value?.app_store;
 
+        // Get other settings
+        const emailSetting = settings.find((item) => item.key === "email");
+        this.data.email = emailSetting?.value || null;
+
+        const whatsappSetting = settings.find((item) => item.key === "whatsapp_number");
+        this.data.WhatsApp_contact = whatsappSetting?.value || null;
+
+        const facebookSetting = settings.find((item) => item.key === "facebook_username");
+        this.data.facebook_link = facebookSetting?.value || null;
+
+        const instagramSetting = settings.find((item) => item.key === "instagram_username");
+        this.data.instagram_link = instagramSetting?.value || null;
+
+        const snapchatSetting = settings.find((item) => item.key === "snapchat_username");
+        this.data.snapchat_link = snapchatSetting?.value || null;
+
+        const twitterSetting = settings.find((item) => item.key === "x_username");
+        this.data.twitter_link = twitterSetting?.value || null;
+
+        const tiktokSetting = settings.find((item) => item.key === "tiktok_username");
+        this.data.tiktok_link = tiktokSetting?.value || null;
+
+        const androidSetting = settings.find((item) => item.key === "android");
+        this.data.android = androidSetting?.value || null;
+
+        const iosSetting = settings.find((item) => item.key === "ios");
+        this.data.ios = iosSetting?.value || null;
+
+        // Note: android and ios might need separate API calls if they exist
         // End:: Set Data
       } catch (error) {
-        console.log(error.response.data.message);
+        console.log(error.response?.data?.message || error.message);
       }
     },
     // End:: Get Data To Edit
 
     // Start:: Submit Form
     async submitForm() {
-      this.isWaitingRequest = !this.isWaitingRequest;
+      this.isWaitingRequest = true;
 
-      const REQUEST_DATA = new FormData();
-      // Start:: Append Request Data
-      REQUEST_DATA.append("key", "social_contact");
-      this.phones.forEach((element) => {
-        if (element.phone) {
-          REQUEST_DATA.append(`value[mobile][]`, element.phone);
-        }
-      });
-      if (this.data.WhatsApp_contact) {
-        REQUEST_DATA.append("value[whatsapp]", this.data.WhatsApp_contact);
+      const REQUEST_DATA = {};
+
+      // Phone numbers (array)
+      const phoneNumbers = this.phones
+        .map((item) => item.phone)
+        .filter((phone) => phone && phone.trim() !== "");
+      if (phoneNumbers.length > 0) {
+        REQUEST_DATA.phone = phoneNumbers;
       }
-      if (this.data.tiktok_link) {
-        REQUEST_DATA.append("value[tikTok]", this.data.tiktok_link);
+
+      // Non-translatable fields
+      if (this.data.email) {
+        REQUEST_DATA.email = this.data.email;
+      }
+      if (this.data.WhatsApp_contact) {
+        REQUEST_DATA.whatsapp_number = this.data.WhatsApp_contact;
       }
       if (this.data.facebook_link) {
-        REQUEST_DATA.append("value[facebook]", this.data.facebook_link);
-      }
-      if (this.data.snapchat_link) {
-        REQUEST_DATA.append("value[snapchat]", this.data.snapchat_link);
-      }
-      if (this.data.twitter_link) {
-        REQUEST_DATA.append("value[twitter]", this.data.twitter_link);
+        REQUEST_DATA.facebook_username = this.data.facebook_link;
       }
       if (this.data.instagram_link) {
-        REQUEST_DATA.append("value[instagram]", this.data.instagram_link);
+        REQUEST_DATA.instagram_username = this.data.instagram_link;
+      }
+      if (this.data.snapchat_link) {
+        REQUEST_DATA.snapchat_username = this.data.snapchat_link;
+      }
+      if (this.data.twitter_link) {
+        REQUEST_DATA.x_username = this.data.twitter_link;
+      }
+      if (this.data.tiktok_link) {
+        REQUEST_DATA.tiktok_username = this.data.tiktok_link;
       }
       if (this.data.android) {
-        REQUEST_DATA.append("value[play_store]", this.data.android);
+        REQUEST_DATA.android = this.data.android;
       }
       if (this.data.ios) {
-        REQUEST_DATA.append("value[app_store]", this.data.ios);
+        REQUEST_DATA.ios = this.data.ios;
       }
-      if (this.data.email) {
-        REQUEST_DATA.append("value[email]", this.data.email);
-      }
-
-      REQUEST_DATA.append("value[url]", "https://www.example.com");
-
-      // Start:: Append Request Data
 
       try {
         await this.$axios({
-          method: "POST",
-          url: `settings?key=social_contact`,
+          method: "PATCH",
+          url: `settings`,
           data: REQUEST_DATA,
         });
         this.isWaitingRequest = false;
@@ -271,7 +295,7 @@ export default {
         this.getDataToEdit();
       } catch (error) {
         this.isWaitingRequest = false;
-        this.$message.error(error.response.data.message);
+        this.$message.error(error.response?.data?.message || error.message);
       }
     },
     // End:: Submit Form

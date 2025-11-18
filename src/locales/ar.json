@@ -114,7 +114,8 @@
     "ContactMessages": {
       "title": "رسائل التواصل",
       "showAll": "كل رسائل التواصل",
-      "show": "عرض بيانات الرسالة"
+      "show": "عرض بيانات الرسالة",
+      "liveChat": "المحادثات المباشرة"
     },
     "AppContent": {
       "addresses": "إدارة العناوين",
@@ -1182,6 +1183,7 @@
   },
 
   "BUTTONS": {
+    "chat": "عرض المحادثة",
     "showDetails": "عرض التفاصيل",
     "reset": "إعادة تعيين",
     "addOption": "إضافة اختيار جديد",
@@ -1311,6 +1313,8 @@
   },
 
   "PLACEHOLDERS": {
+    "type_message": "اكتب رسالتك هنا..",
+    "offer": "عرض",
     "manage_districts": "إدارة الأحياء",
     "add_new_district": "إضافة حي جديد",
     "edit_district_data": "تعديل بيانات الحي",
@@ -1805,6 +1809,9 @@
     "startDate": "تاريخ البدء",
     "endDate": "تاريخ النهاية",
     "messageReplay": "الرد علي الرسالة",
+    "last_message": "آخر رسالة",
+    "data_last_message": "تاريخ آخر رسالة",
+    "last_message_status": "حالة آخر رسالة",
     "suggestionReply": "الرد على المقترح",
     "role": "الدور",
     "editPassword": "تعديل كلمة المرور",
@@ -1964,6 +1971,12 @@
     "ads_name": "اسم الإعلان",
     "start_date": "تاريخ بداية النشر",
     "end_date": "تاريخ نهاية النشر",
+    "link_type": "نوع الرابط",
+    "external": "خارجي",
+    "internal": "داخلي",
+    "external_url": "الرابط الخارجي",
+    "internal_type": "نوع الواجهة",
+    "item": "العنصر",
     "Multiple_Select": "اختيار متعدد",
     "Single_Select": "اختيار منفرد",
     "choose_all": "اختيار الكل",
@@ -2301,7 +2314,9 @@
     "yearly": "سنوي",
     "download_pdf": "تحميل PDF",
 
-    "guest_name": "اسم الضيف",
+    "guest_name": "اسم الزائر",
+    "guest": "زائر",
+    "anonymous": "مجهول",
     "host_name": "اسم المضيف",
 
     "suggestions": "إدارة المقترحات",
@@ -2531,6 +2546,9 @@
     "expectedTime": "حقل الوقت المتوقع لا يمكن أن يكون فارغًا",
     "price": "حقل السعر لا يمكن أن يكون فارغًا",
     "image": "يجب اختيار الصورة",
+    "external_url": "حقل الرابط الخارجي مطلوب",
+    "internal_link": "حقل نوع الواجهة والعنصر مطلوب",
+    "end_date_after_start": "تاريخ النهاية يجب أن يكون بعد أو يساوي تاريخ البداية",
     "startDate": "يجب اختيار تاريخ البدء",
     "endDate": "يجب اختيار تاريخ النهاية",
     "handle": "يجب أن يكون تاريخ البدء قبل تاريخ الانتهاء",
@@ -2642,5 +2660,11 @@
     "reject_join_request": " تم رفض  طلب الانضمام",
     "accept_join_request": " تم قبول  طلب الانضمام",
     "reject_request": "تم رفض الطلب بنجاح"
-  }
+  },
+
+  "LiveChat": {
+      "title": "المحادثات",
+      "showAll": "كل المحادثات",
+      "add": "بدء محادثة جديد"
+    }
 }

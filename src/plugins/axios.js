@@ -11,7 +11,7 @@ const CURRENT_LANG = store.getters["AppLangModule/getAppLocale"] || 'ar';
 // https://backend.drznflu.com/dashboard-api/v1/
 // https://backend.drzn.moltaqadev.com/dashboard-api/v1/
 axios.defaults.baseURL =
-  "https://drzn.moltaqadev.com/api/v1/";
+  "https://backend.drzn.moltaqadev.com/api/v1/";
 
 axios.defaults.headers.common["cache-control"] = "no-cache";
 axios.defaults.headers.common["Accept"] = "application/json";

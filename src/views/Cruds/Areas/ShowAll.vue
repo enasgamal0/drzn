@@ -447,7 +447,7 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: "regions",
+          url: "regions?per_page=10",
           params: {
             page: this.paginations.current_page,
             "search": this.filterOptions.name,

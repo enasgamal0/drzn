@@ -19,63 +19,98 @@
           <base-image-upload-input
             col="12"
             identifier="image"
-            :placeholder="$t('PLACEHOLDERS.image')"
+            :placeholder="$t('PLACEHOLDERS.advertisement')"
             @selectImage="selectImage"
             :acceptVideo="true"
             required
           />
           <!-- End:: Image Upload Input -->
 
-          <!-- <BaseImageUploadInput @file-selected="handleFileSelected" @file-removed="handleFileRemoved" /> -->
-
           <!-- Start:: Name Input -->
           <base-input
             col="6"
             type="text"
-            :placeholder="$t('PLACEHOLDERS.nameAr')"
-            v-model.trim="data.nameAr"
+            :placeholder="$t('TABLES.ImagesSpaces.name')"
+            v-model.trim="data.name"
+            :maxlength="100"
             required
           />
           <!-- End:: Name Input -->
 
-          <!-- Start:: Name Input -->
-          <base-input
+          <!-- Start:: Link Type -->
+          <base-select-input
             col="6"
-            type="text"
-            :placeholder="$t('PLACEHOLDERS.nameEn')"
-            v-model.trim="data.nameEn"
-            required
+            :optionsList="linkTypes"
+            :placeholder="$t('PLACEHOLDERS.link_type')"
+            v-model="data.link_type"
+            trackBy="value"
+            label="name"
           />
+          <!-- End:: Link Type -->
+
+          <!-- Start:: External URL (shown when link_type is external) -->
+          <base-input
+            v-if="data.link_type && data.link_type.value === 'external'"
+            col="12"
+            type="text"
+            :placeholder="$t('PLACEHOLDERS.external_url')"
+            v-model.trim="data.external_url"
+          />
+          <!-- End:: External URL -->
+
+          <!-- Start:: Internal Type (shown when link_type is internal) -->
+          <base-select-input
+            v-if="data.link_type && data.link_type.value === 'internal'"
+            :col="data.internal_type ? 6 : 12"
+            :optionsList="internalTypes"
+            :placeholder="$t('PLACEHOLDERS.internal_type')"
+            v-model="data.internal_type"
+            trackBy="value"
+            label="name"
+            @input="handleInternalTypeChange"
+          />
+          <!-- End:: Internal Type -->
+
+          <!-- Start:: Item ID (shown when link_type is internal) -->
+          <base-select-input
+            v-if="data.link_type && data.link_type.value === 'internal' && data.internal_type"
+            col="6"
+            :optionsList="itemsList"
+            :placeholder="$t('PLACEHOLDERS.item')"
+            v-model="data.item_id"
+            trackBy="id"
+            label="name"
+          />
+          <!-- End:: Item ID -->
+
           <base-picker-input
             col="6"
             type="date"
-            :disabledDate="disabledDate"
+            :disabledDate="disabledStartDate"
             :placeholder="$t('PLACEHOLDERS.start_date')"
-            v-model.trim="data.publish_start_date"
+            v-model.trim="data.start_date"
             required
           />
 
           <base-picker-input
             col="6"
             type="date"
-            :disabledDate="disabledDate"
+            :disabledDate="disabledEndDate"
             :placeholder="$t('PLACEHOLDERS.end_date')"
-            v-model.trim="data.publish_end_date"
+            v-model.trim="data.end_date"
             required
           />
-
-          <!-- End:: Name Input -->
 
           <!-- Start:: Deactivate Switch Input -->
           <div class="input_wrapper switch_wrapper my-5">
             <v-switch
               color="green"
               :label="
-                data.active
+                data.is_active
                   ? $t('PLACEHOLDERS.active')
                   : $t('PLACEHOLDERS.notActive')
               "
-              v-model="data.active"
+              v-model="data.is_active"
               hide-details
             ></v-switch>
           </div>
@@ -123,28 +158,72 @@ export default {
           path: null,
           file: null,
         },
-        nameAr: null,
-        nameEn: null,
-        active: true,
-        publish_start_date: null,
-        publish_end_date: null,
+        name: null,
+        link_type: null,
+        external_url: null,
+        internal_type: null,
+        item_id: null,
+        start_date: null,
+        end_date: null,
+        is_active: true,
       },
       // End:: Data Collection To Send
 
-      arabicRegex: /^[\u0600-\u06FF\s]+$/,
-      EnRegex: /[\u0600-\u06FF]/,
+      // Start:: Options Lists
+      itemsList: [],
+      // End:: Options Lists
     };
   },
 
-  computed: {},
+  computed: {
+    linkTypes() {
+      return [
+        {
+          id: 1,
+          name: this.$t("PLACEHOLDERS.external") || "External",
+          value: "external",
+        },
+        {
+          id: 2,
+          name: this.$t("PLACEHOLDERS.internal") || "Internal",
+          value: "internal",
+        },
+      ];
+    },
+    internalTypes() {
+      return [
+        {
+          id: 1,
+          name: this.$t("PLACEHOLDERS.product") || "Product",
+          value: "product",
+        },
+        {
+          id: 2,
+          name: this.$t("PLACEHOLDERS.offer") || "Offer",
+          value: "offer",
+        },
+        {
+          id: 3,
+          name: this.$t("PLACEHOLDERS.category") || "Category",
+          value: "category",
+        },
+      ];
+    },
+  },
 
   methods: {
     selectImage(selectedImage) {
       this.data.image = selectedImage;
     },
 
-    disabledDate(current) {
+    disabledStartDate(current) {
       return current && current < moment().startOf("day");
+    },
+    disabledEndDate(current) {
+      if (!this.data.start_date) {
+        return current && current < moment().startOf("day");
+      }
+      return current && current < moment(this.data.start_date).startOf("day");
     },
 
     onCopy(event) {
@@ -154,46 +233,86 @@ export default {
       event.preventDefault();
     },
 
-    validateInput() {
-      // Remove non-Arabic characters from the input
-      this.data.nameAr = this.data.nameAr.replace(/[^\u0600-\u06FF\s]/g, "");
+    // Start:: Handle Internal Type Change
+    async handleInternalTypeChange() {
+      this.data.item_id = null;
+      this.itemsList = [];
+      if (this.data.internal_type && this.data.internal_type.value) {
+        await this.fetchItems(this.data.internal_type.value);
+      }
     },
-    removeArabicCharacters() {
-      this.data.nameEn = this.data.nameEn.replace(this.EnRegex, "");
-    },
+    // End:: Handle Internal Type Change
 
-    handleFileSelected({ file, fileType }) {
-      this.file = file; // Store the selected file in your data
-      this.fileType = fileType; // Store the selected file in your data
+    // Start:: Fetch Items Based on Internal Type
+    async fetchItems(type) {
+      try {
+        let url = "";
+        if (type === "product") {
+          url = "products?paginate=false&filter[is_active]=true";
+        } else if (type === "offer") {
+          url = "offers?paginate=false&filter[is_active]=true";
+        } else if (type === "category") {
+          url = "product-categories?paginate=false&filter[is_active]=true";
+        }
+
+        if (url) {
+          let res = await this.$axios({
+            method: "GET",
+            url: url,
+            params: {
+              limit: 0,
+              page: 0,
+            },
+          });
+          this.itemsList = (res.data.data?.data || res.data.data || []).map(
+            (item) => ({
+              id: item.id,
+              name: item.name || item.name_ar || item.title || item.title_ar,
+            })
+          );
+        }
+      } catch (error) {
+        console.log(error.response?.data?.message);
+        this.itemsList = [];
+      }
     },
-    handleFileRemoved() {
-      this.file = null; // Reset the file when it's removed
-      this.fileType = "";
-    },
+    // End:: Fetch Items Based on Internal Type
 
     // Start:: validate Form Inputs
     validateFormInputs() {
       this.isWaitingRequest = true;
 
-      if (!this.data.nameAr) {
+      if (!this.data.name || this.data.name.trim().length < 2) {
         this.isWaitingRequest = false;
-        this.$message.error(this.$t("VALIDATION.nameAr"));
+        this.$message.error(this.$t("VALIDATION.name") || "Name must be at least 2 characters");
         return;
-      } else if (!this.data.nameEn) {
+      } else if (this.data.name.length > 100) {
         this.isWaitingRequest = false;
-        this.$message.error(this.$t("VALIDATION.nameEn"));
+        this.$message.error(this.$t("VALIDATION.name") || "Name must not exceed 100 characters");
         return;
       } else if (!this.data.image.file) {
         this.isWaitingRequest = false;
         this.$message.error(this.$t("VALIDATION.image"));
         return;
-      } else if (!this.data.publish_start_date) {
+      } else if (!this.data.start_date) {
         this.isWaitingRequest = false;
         this.$message.error(this.$t("VALIDATION.publish_start_date"));
         return;
-      } else if (!this.data.publish_end_date) {
+      } else if (!this.data.end_date) {
         this.isWaitingRequest = false;
         this.$message.error(this.$t("VALIDATION.publish_end_date"));
+        return;
+      } else if (moment(this.data.end_date).isBefore(this.data.start_date)) {
+        this.isWaitingRequest = false;
+        this.$message.error(this.$t("VALIDATION.end_date_after_start") || "End date must be after or equal to start date");
+        return;
+      } else if (this.data.link_type && this.data.link_type.value === 'external' && !this.data.external_url) {
+        this.isWaitingRequest = false;
+        this.$message.error(this.$t("VALIDATION.external_url") || "External URL is required");
+        return;
+      } else if (this.data.link_type && this.data.link_type.value === 'internal' && (!this.data.internal_type || !this.data.item_id)) {
+        this.isWaitingRequest = false;
+        this.$message.error(this.$t("VALIDATION.internal_link") || "Internal type and item are required");
         return;
       } else {
         this.submitForm();
@@ -206,26 +325,40 @@ export default {
     async submitForm() {
       const REQUEST_DATA = new FormData();
       // Start:: Append Request Data
-      REQUEST_DATA.append("name[ar]", this.data.nameAr);
-
-      REQUEST_DATA.append("name[en]", this.data.nameEn);
+      REQUEST_DATA.append("name", this.data.name);
+      
       if (this.data.image.file) {
-        REQUEST_DATA.append("image", this.data.image.file); // Append the file to the FormData
-        // REQUEST_DATA.append("image_type", this.file); // Append the file to the FormData
+        REQUEST_DATA.append("advertising", this.data.image.file);
       }
-      if (this.data.publish_start_date){
-        REQUEST_DATA.append("start_date", this.data.publish_start_date);
+      
+      if (this.data.link_type && this.data.link_type.value) {
+        REQUEST_DATA.append("link_type", this.data.link_type.value);
+        
+        if (this.data.link_type.value === 'external' && this.data.external_url) {
+          REQUEST_DATA.append("external_url", this.data.external_url);
+        } else if (this.data.link_type.value === 'internal') {
+          if (this.data.internal_type && this.data.internal_type.value) {
+            REQUEST_DATA.append("internal_type", this.data.internal_type.value);
+          }
+          if (this.data.item_id && this.data.item_id.id) {
+            REQUEST_DATA.append("item_id", this.data.item_id.id);
+          }
+        }
       }
-      if (this.data.publish_end_date){
-        REQUEST_DATA.append("end_date", this.data.publish_end_date);
+      
+      if (this.data.start_date) {
+        REQUEST_DATA.append("start_date", this.data.start_date);
       }
-      REQUEST_DATA.append("is_active", this.data.active ? 1 : 0);
-      // Start:: Append Request Data
+      if (this.data.end_date) {
+        REQUEST_DATA.append("end_date", this.data.end_date);
+      }
+      REQUEST_DATA.append("is_active", this.data.is_active ? 1 : 0);
+      // End:: Append Request Data
 
       try {
         await this.$axios({
           method: "POST",
-          url: `advertisements`,
+          url: `advertisings`,
           data: REQUEST_DATA,
         });
         this.isWaitingRequest = false;

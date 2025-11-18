@@ -319,8 +319,7 @@
         class="home_route"
         @click="$emit('fireToggleNavDrawerEmit')"
         v-if="
-          $can('read-product', 'Products') ||
-          $can('read-product', 'المنتجات')
+          $can('read-product', 'Products') || $can('read-product', 'المنتجات')
         "
       >
         <router-link to="/products/all">
@@ -887,7 +886,10 @@
       <div
         class="home_route"
         @click="$emit('fireToggleNavDrawerEmit')"
-        v-if="$can('advertisements index', 'advertisements')"
+        v-if="
+          $can('read-advertising', 'Advertising') ||
+          $can('read-advertising', 'الإعلانات')
+        "
       >
         <router-link to="/Ads/all">
           <span class="route_icon">
@@ -1170,10 +1172,15 @@
       <!-- End:: FAQ Route -->
 
       <!-- Start:: app settings Route -->
-      <div
+      <!-- <div
         class="home_route"
         @click="$emit('fireToggleNavDrawerEmit')"
-        v-if="$can('settings index', 'settings')"
+        v-if="
+          $can('read-setting', 'Settings') ||
+          $can('read-setting', 'الإعدادات') ||
+          $can('update-setting', 'Settings') ||
+          $can('update-setting', 'الإعدادات')
+        "
       >
         <router-link to="/app_settings">
           <span class="route_icon">
@@ -1188,12 +1195,12 @@
             {{ $t("SIDENAV.settings.general_app") }}
           </span>
         </router-link>
-      </div>
+      </div> -->
       <!-- End:: app settings Route -->
       <!-- Start:: Side Nav Routes -->
       <div
         class="side_routes_wrapper"
-        v-if="$can('settings index', 'settings')"
+        v-if="$can('read-setting', 'Settings') || $can('read-setting', 'الإعدادات') || $can('update-setting', 'Settings') || $can('update-setting', 'الإعدادات')"
       >
         <a-menu
           style="width: 100%"
@@ -1255,6 +1262,28 @@
         </router-link>
       </div>
       <!-- End:: contacts Route -->
+
+      <!-- Start:: LiveChat Route -->
+      <div
+        class="home_route"
+        @click="$emit('fireToggleNavDrawerEmit')"
+      >
+        <!-- v-if="$can('live-chat index', 'live-chat')" -->
+        <router-link to="/live-chat/all">
+          <span class="route_icon">
+            <img
+              src="@/assets/media/icons/ui_icons/messages.svg"
+              alt="icon"
+              width="40"
+              height="40"
+            />
+          </span>
+          <span class="route_text">
+            {{ $t("LiveChat.title") }}
+          </span>
+        </router-link>
+      </div>
+      <!-- End:: LiveChat Route -->
 
       <div class="side_routes_wrapper">
         <a-menu style="width: 100%" mode="inline">

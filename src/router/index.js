@@ -286,6 +286,13 @@ import Allorders from "../views/Cruds/Orders/ShowAll.vue";
 import Showorders from "../views/Cruds/Orders/Show.vue";
 // ============== End:: orders Routes
 
+// ============== Start:: LiveChat Routes
+import LiveChatHome from "../views/Cruds/LiveChat/Home.vue";
+import AllLiveChat from "../views/Cruds/LiveChat/ShowAll.vue";
+import ShowLiveChat from "../views/Cruds/LiveChat/Show.vue";
+import ChatLiveChat from "../views/Cruds/LiveChat/Chat.vue";
+// ============== End:: LiveChat Routes
+
 // ============== Start:: UserRequests Routes =================
 import UserRequestsHome from "../views/Cruds/UserRequests/Home.vue";
 import AllUserRequests from "../views/Cruds/UserRequests/ShowAll.vue";
@@ -3074,6 +3081,57 @@ const routes = [
         ],
       },
       // End:: sub Categories Questions Routes Config
+
+      // Start:: LiveChat Routes Config
+      {
+        path: "/live-chat",
+        name: "LiveChat",
+        component: LiveChatHome,
+        meta: {
+          middleware: [auth],
+        },
+        children: [
+          {
+            path: "all",
+            name: "AllLiveChat",
+            component: AllLiveChat,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: true,
+                subject: true,
+              },
+            },
+          },
+          {
+            path: "show/:id",
+            name: "ShowLiveChat",
+            component: ShowLiveChat,
+            props: true,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: true,
+                subject: true,
+              },
+            },
+          },
+          {
+            path: "chat/:id",
+            name: "ChatLiveChat",
+            component: ChatLiveChat,
+            props: true,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: true,
+                subject: true,
+              },
+            },
+          },
+        ],
+      },
+      // End:: LiveChat Routes Config
 
       // Start:: management Routes Config
       // {

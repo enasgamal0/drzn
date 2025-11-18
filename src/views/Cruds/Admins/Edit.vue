@@ -199,9 +199,9 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: "roles?page=0&limit=0&status=1",
+          url: "roles?filter[is_active]=1&paginate=false",
         });
-        this.roles = res.data.data.data;
+        this.roles = res.data.data;
       } catch (error) {
         this.loading = false;
         console.log(error.response.data.message);
@@ -212,17 +212,17 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `admins/${this.id}`,
+          url: `users/${this.id}`,
         });
-
-        this.data.image.path = res.data.data.Admin.image;
-        this.data.name = res.data.data.Admin.name;
-        this.data.email = res.data.data.Admin.email;
-        this.data.phone = res.data.data.Admin.mobile;
-        this.data.role = res.data.data.Admin.roles[0];
-        this.data.active = res.data.data.Admin.is_active;
-        this.data.numberOfVisits = res.data.data.Admin.login_count;
-        this.data.lastVisit = res.data.data.Admin.last_login;
+        console.log("DATA =>", res.data.data.avatar);
+        this.data.image.path = res.data.data.avatar;
+        this.data.name = res.data.data.name;
+        this.data.email = res.data.data.email;
+        this.data.phone = res.data.data.phone;
+        this.data.role = res.data.data.roles[0];
+        this.data.active = res.data.data.status;
+        this.data.numberOfVisits = res.data.data.login_number;
+        this.data.lastVisit = res.data.data.last_login_date;
       } catch (error) {
         console.log(error.response.data.message);
       }
@@ -300,7 +300,7 @@ export default {
       }
       REQUEST_DATA.append("name", this.data.name);
       REQUEST_DATA.append("email", this.data.email);
-      REQUEST_DATA.append("mobile", this.data.phone);
+      REQUEST_DATA.append("phone", this.data.phone);
       if (this.data.role) {
         REQUEST_DATA.append("role_id", this.data.role?.id);
       }
@@ -314,20 +314,14 @@ export default {
           this.data.passwordConfirmation
         );
       }
-      REQUEST_DATA.append("is_active", this.data.active ? 1 : 0);
-      if (this.data.role?.slug == "cleaner") {
-        REQUEST_DATA.append("whattsapp", this.data.whatsApp);
-        this.data.areas?.map((ele, index) => {
-          REQUEST_DATA.append(`area[${index}]`, ele.id);
-        });
-      }
-      REQUEST_DATA.append("_method", "PUT");
+      // REQUEST_DATA.append("status", this.data.active ? 1 : 0);
+
       // Start:: Append Request Data
 
       try {
         await this.$axios({
-          method: "POST",
-          url: `admins/${this.id}`,
+          method: "PATCH",
+          url: `users/${this.id}`,
           data: REQUEST_DATA,
         });
         this.isWaitingRequest = false;
@@ -344,7 +338,7 @@ export default {
   async created() {
     // Start:: Fire Methods
     this.getRoles();
-    this.getAllareas();
+    // this.getAllareas();
     this.getDataToEdit();
     // End:: Fire Methods
   },
